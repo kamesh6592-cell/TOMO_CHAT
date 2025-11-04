@@ -4,7 +4,7 @@ import { ToolUIPart } from "ai";
 import equal from "lib/equal";
 import { cn } from "lib/utils";
 import { ImagesIcon } from "lucide-react";
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
 import { TextShimmer } from "ui/text-shimmer";
 import LetterGlitch from "ui/letter-glitch";
 
@@ -24,6 +24,8 @@ interface ImageGenerationResult {
 function PureImageGeneratorToolInvocation({
   part,
 }: ImageGeneratorToolInvocationProps) {
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
+
   const isGenerating = useMemo(() => {
     return !part.state.startsWith("output");
   }, [part.state]);
@@ -47,6 +49,10 @@ function PureImageGeneratorToolInvocation({
       (part.state === "output-available" && result?.images.length === 0)
     );
   }, [part.state, result]);
+
+  const handleImageLoad = (index: number) => {
+    setLoadedImages((prev) => new Set(prev).add(index));
+  };
 
   // Get mode-specific text
   const getModeText = (mode: string) => {
@@ -119,13 +125,38 @@ function PureImageGeneratorToolInvocation({
                   key={index}
                   className="relative group rounded-lg overflow-hidden border border-border hover:border-primary transition-all shadow-sm hover:shadow-md"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={image.url}
-                    loading="lazy"
-                    alt={`Generated image ${index + 1}`}
-                    className="w-full h-auto object-cover"
-                  />
+                  {/* Progressive reveal animation */}
+                  <div
+                    className={cn(
+                      "relative overflow-hidden transition-all duration-1000 ease-out",
+                      loadedImages.has(index)
+                        ? "opacity-100 scale-100"
+                        : "opacity-0 scale-95"
+                    )}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={image.url}
+                      loading="lazy"
+                      alt={`Generated image ${index + 1}`}
+                      className={cn(
+                        "w-full h-auto object-cover transition-all duration-1000",
+                        loadedImages.has(index) ? "blur-0" : "blur-lg"
+                      )}
+                      onLoad={() => handleImageLoad(index)}
+                      style={{
+                        animation: loadedImages.has(index)
+                          ? "revealImage 1.2s cubic-bezier(0.4, 0, 0.2, 1)"
+                          : "none",
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Loading skeleton */}
+                  {!loadedImages.has(index) && (
+                    <div className="absolute inset-0 bg-gradient-to-br from-muted/50 to-muted animate-pulse" />
+                  )}
+
                   {/* Hover overlay */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
                     <a
@@ -140,6 +171,26 @@ function PureImageGeneratorToolInvocation({
                 </div>
               ))}
             </div>
+            
+            {/* Add keyframe animation styles */}
+            <style jsx>{`
+              @keyframes revealImage {
+                0% {
+                  opacity: 0;
+                  transform: scale(0.95);
+                  filter: blur(20px);
+                }
+                50% {
+                  opacity: 0.5;
+                  filter: blur(10px);
+                }
+                100% {
+                  opacity: 1;
+                  transform: scale(1);
+                  filter: blur(0);
+                }
+              }
+            `}</style>
           </>
         )}
       </div>
