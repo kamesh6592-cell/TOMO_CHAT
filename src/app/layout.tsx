@@ -18,9 +18,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "better-chatbot",
+  title: "AJ STUDIOZ",
   description:
-    "Better Chatbot is a chatbot that uses the Tools to answer questions.",
+    "AJ STUDIOZ is an AI-powered chatbot that uses advanced tools to answer questions.",
 };
 
 export default async function RootLayout({
