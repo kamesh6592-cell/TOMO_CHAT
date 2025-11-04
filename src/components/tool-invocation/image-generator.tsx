@@ -116,14 +116,15 @@ function PureImageGeneratorToolInvocation({
               className={cn(
                 "grid gap-3",
                 images.length === 1
-                  ? "grid-cols-1 max-w-2xl"
-                  : "grid-cols-1 md:grid-cols-2 max-w-3xl",
+                  ? "grid-cols-1 max-w-lg mx-auto"
+                  : "grid-cols-1 sm:grid-cols-2 max-w-4xl",
               )}
             >
               {images.map((image, index) => (
                 <div
                   key={index}
-                  className="relative group rounded-lg overflow-hidden border border-border hover:border-primary transition-all shadow-sm hover:shadow-md"
+                  className="relative group rounded-xl overflow-hidden border border-border/50 hover:border-primary/50 transition-all duration-300 shadow-md hover:shadow-xl backdrop-blur-sm bg-card/50"
+                  style={{ maxHeight: '400px' }}
                 >
                   {/* Progressive reveal animation */}
                   <div
@@ -140,34 +141,39 @@ function PureImageGeneratorToolInvocation({
                       loading="lazy"
                       alt={`Generated image ${index + 1}`}
                       className={cn(
-                        "w-full h-auto object-cover transition-all duration-1000",
+                        "w-full h-full object-cover transition-all duration-1000",
                         loadedImages.has(index) ? "blur-0" : "blur-lg"
                       )}
-                      onLoad={() => handleImageLoad(index)}
                       style={{
+                        maxHeight: '400px',
+                        objectFit: 'cover',
                         animation: loadedImages.has(index)
                           ? "revealImage 1.2s cubic-bezier(0.4, 0, 0.2, 1)"
                           : "none",
                       }}
+                      onLoad={() => handleImageLoad(index)}
                     />
                   </div>
                   
                   {/* Loading skeleton */}
                   {!loadedImages.has(index) && (
-                    <div className="absolute inset-0 bg-gradient-to-br from-muted/50 to-muted animate-pulse" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-muted/50 via-muted/30 to-muted/50 animate-pulse" />
                   )}
 
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                  {/* Hover overlay with gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
                     <a
                       href={image.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-medium hover:scale-105 transition-transform"
+                      className="bg-primary/90 backdrop-blur-sm text-primary-foreground px-5 py-2 rounded-full text-sm font-medium hover:scale-105 hover:bg-primary transition-all shadow-lg"
                     >
-                      Open
+                      View Full Size
                     </a>
                   </div>
+                  
+                  {/* Subtle corner accent */}
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
               ))}
             </div>
