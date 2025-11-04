@@ -21,6 +21,35 @@ export const metadata: Metadata = {
   title: "AJ STUDIOZ",
   description:
     "AJ STUDIOZ is an AI-powered chatbot that uses advanced tools to answer questions.",
+  metadataBase: new URL('https://hello-its.vercel.app'),
+  icons: {
+    icon: [
+      { url: '/aj-logo.jpg' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    other: [
+      { rel: 'icon', url: '/favicon.ico' },
+    ],
+  },
+  manifest: '/manifest.json',
+  openGraph: {
+    title: 'AJ STUDIOZ',
+    description: 'AJ STUDIOZ is an AI-powered chatbot that uses advanced tools to answer questions.',
+    url: 'https://hello-its.vercel.app',
+    siteName: 'AJ STUDIOZ',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'AJ STUDIOZ',
+    description: 'AJ STUDIOZ is an AI-powered chatbot that uses advanced tools to answer questions.',
+  },
 };
 
 export default async function RootLayout({

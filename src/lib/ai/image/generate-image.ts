@@ -85,7 +85,7 @@ export async function generateImageWithOpenRouter(
     baseURL: "https://openrouter.ai/api/v1",
     apiKey: apiKey,
     defaultHeaders: {
-      "HTTP-Referer": process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_BASE_URL || "https://aj-studioz.com",
+      "HTTP-Referer": process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_BASE_URL || "https://hello-its.vercel.app",
       "X-Title": "AJ STUDIOZ",
     },
   });

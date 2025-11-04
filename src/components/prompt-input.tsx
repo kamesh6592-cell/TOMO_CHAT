@@ -222,7 +222,7 @@ export default function PromptInput({
   );
 
   const handleGenerateImage = useCallback(
-    (provider?: "google" | "openai") => {
+    (provider?: "google" | "openai" | "openrouter") => {
       if (!provider) {
         appStoreMutate({
           threadImageToolModel: {},
@@ -547,6 +547,14 @@ export default function PromptInput({
                           >
                             <OpenAIIcon className="mr-2 size-4" />
                             OpenAI
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            disabled={modelInfo?.isToolCallUnsupported}
+                            onClick={() => handleGenerateImage("openrouter")}
+                            className="cursor-pointer"
+                          >
+                            <ImagesIcon className="mr-2 size-4" />
+                            OpenRouter (Gemini)
                           </DropdownMenuItem>
                         </DropdownMenuSubContent>
                       </DropdownMenuPortal>
