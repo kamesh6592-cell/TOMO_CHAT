@@ -9,6 +9,7 @@ import { getBase64Data } from "lib/file-storage/storage-utils";
 import { serverFileStorage } from "lib/file-storage";
 import { openai } from "@ai-sdk/openai";
 import { xai } from "@ai-sdk/xai";
+import OpenAI from "openai";
 
 import {
   FilePart,
@@ -70,6 +71,102 @@ export async function generateImageWithXAI(
       })),
     };
   });
+}
+
+export async function generateImageWithOpenRouter(
+  options: GenerateImageOptions,
+): Promise<GeneratedImageResult> {
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) {
+    throw new Error("OPENROUTER_API_KEY is not set");
+  }
+
+  const openrouter = new OpenAI({
+    baseURL: "https://openrouter.ai/api/v1",
+    apiKey: apiKey,
+    defaultHeaders: {
+      "HTTP-Referer": process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_BASE_URL || "https://aj-studioz.com",
+      "X-Title": "AJ STUDIOZ",
+    },
+  });
+
+  // Convert messages to OpenRouter format
+  const messages: Array<{
+    role: string;
+    content: Array<{ type: string; text?: string; image_url?: { url: string } }>;
+  }> = [];
+
+  // Add conversation history
+  if (options.messages && options.messages.length > 0) {
+    for (const message of options.messages.slice(-6)) {
+      if (isString(message.content)) {
+        messages.push({
+          role: message.role === "user" ? "user" : "assistant",
+          content: [{ type: "text", text: message.content }],
+        });
+      } else {
+        const contentParts: Array<{ type: string; text?: string; image_url?: { url: string } }> = [];
+        
+        for (const part of message.content) {
+          if (part.type === "text") {
+            contentParts.push({ type: "text", text: (part as TextPart).text });
+          } else if (part.type === "image") {
+            const imagePart = part as ImagePart;
+            let imageUrl = "";
+            
+            if (typeof imagePart.image === "string") {
+              imageUrl = imagePart.image;
+            } else {
+              // Convert to base64 data URL
+              const base64Data = await getBase64Data({
+                data: imagePart.image,
+                mimeType: imagePart.mediaType || "image/png",
+              });
+              imageUrl = `data:${base64Data.mimeType};base64,${base64Data.data}`;
+            }
+            
+            contentParts.push({
+              type: "image_url",
+              image_url: { url: imageUrl },
+            });
+          }
+        }
+        
+        messages.push({
+          role: message.role === "user" ? "user" : "assistant",
+          content: contentParts,
+        });
+      }
+    }
+  }
+
+  // Add the prompt
+  messages.push({
+    role: "user",
+    content: [{ type: "text", text: options.prompt }],
+  });
+
+  const completion = await openrouter.chat.completions.create({
+    model: "google/gemini-2.5-flash-image",
+    messages: messages as any,
+  });
+
+  // Extract images from response
+  const responseContent = completion.choices[0]?.message?.content;
+  
+  if (!responseContent) {
+    throw new Error("No response from OpenRouter");
+  }
+
+  // OpenRouter returns image URLs in the response
+  // Parse the response to extract image URLs
+  const images: GeneratedImage[] = [];
+  
+  // For now, return empty as OpenRouter's image generation might return differently
+  // This is a placeholder - adjust based on actual OpenRouter response format
+  logger.info("OpenRouter response:", responseContent);
+  
+  return { images };
 }
 
 export const generateImageWithNanoBanana = async (

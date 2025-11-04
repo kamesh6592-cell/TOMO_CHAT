@@ -15,6 +15,8 @@ import logger from "logger";
 import { openai } from "@ai-sdk/openai";
 import { toAny } from "lib/utils";
 
+export { openRouterImageTool } from "./openrouter";
+
 export type ImageToolResult = {
   images: {
     url: string;

@@ -191,6 +191,9 @@ importers:
       ollama-ai-provider-v2:
         specifier: ^1.5.2
         version: 1.5.2(zod@4.1.12)
+      openai:
+        specifier: ^6.8.0
+        version: 6.8.0(ws@8.18.3)(zod@4.1.12)
       pg:
         specifier: ^8.16.3
         version: 8.16.3
@@ -5145,6 +5148,18 @@ packages:
 
   oniguruma-to-es@4.3.3:
     resolution: {integrity: sha512-rPiZhzC3wXwE59YQMRDodUwwT9FZ9nNBwQQfsd1wfdtlKEyCdRV0avrTcSZ5xlIvGRVPd/cx6ZN45ECmS39xvg==}
+
+  openai@6.8.0:
+    resolution: {integrity: sha512-GQUpzb9FoNkh1wqJuDIQ8e/Sq8dW+T3GakG6wJTXBE8Lufx1GaUcgZd087vhm8f/MiOzsTEkfRamYxzJ/jOoiw==}
+    hasBin: true
+    peerDependencies:
+      ws: ^8.18.0
+      zod: ^3.25 || ^4.0
+    peerDependenciesMeta:
+      ws:
+        optional: true
+      zod:
+        optional: true
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -11941,6 +11956,11 @@ snapshots:
       oniguruma-parser: 0.12.1
       regex: 6.0.1
       regex-recursion: 6.0.2
+
+  openai@6.8.0(ws@8.18.3)(zod@4.1.12):
+    optionalDependencies:
+      ws: 8.18.3
+      zod: 4.1.12
 
   optionator@0.9.4:
     dependencies:
