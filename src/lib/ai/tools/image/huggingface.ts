@@ -76,7 +76,7 @@ export const huggingFaceImageTool = createTool({
         .unwrap();
 
       const modelName = process.env.HUGGINGFACE_API_KEY 
-        ? "qwen-image (HuggingFace FREE tier)" 
+        ? "stable-diffusion (HuggingFace FREE)" 
         : "pollinations-ai (FREE fallback)";
 
       return {

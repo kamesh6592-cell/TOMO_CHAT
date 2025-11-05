@@ -206,7 +206,7 @@ export const generateImageWithHuggingFace = async (
   options: GenerateImageOptions,
 ): Promise<GeneratedImageResult> => {
   // HuggingFace Inference API - FREE tier available
-  // Uses Qwen-Image model via HuggingFace Router (better quality and accuracy)
+  // Uses multiple models with fallback
   const apiKey = process.env.HUGGINGFACE_API_KEY;
   
   if (!apiKey) {
@@ -215,48 +215,61 @@ export const generateImageWithHuggingFace = async (
     return generateImageWithPollinations(options);
   }
   
-  try {
-    // Try HuggingFace with Qwen-Image model (better quality, more accurate)
-    const response = await fetch(
-      "https://api-inference.huggingface.co/models/Qwen/Qwen2-VL-7B-Instruct",
-      {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          inputs: options.prompt,
-          parameters: {
-            num_inference_steps: 5,
+  // List of working image generation models to try
+  const models = [
+    "stabilityai/stable-diffusion-2-1",
+    "runwayml/stable-diffusion-v1-5",
+    "CompVis/stable-diffusion-v1-4",
+  ];
+  
+  // Try each model until one works
+  for (const model of models) {
+    try {
+      logger.info(`Trying HuggingFace model: ${model}`);
+      
+      const response = await fetch(
+        `https://api-inference.huggingface.co/models/${model}`,
+        {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
           },
-        }),
-        signal: options.abortSignal,
+          body: JSON.stringify({
+            inputs: options.prompt,
+          }),
+          signal: options.abortSignal,
+        }
+      );
+      
+      if (response.ok) {
+        // Response is a blob (image)
+        const arrayBuffer = await response.arrayBuffer();
+        
+        // Check if we actually got image data
+        if (arrayBuffer.byteLength > 1000) {
+          const base64 = Buffer.from(arrayBuffer).toString("base64");
+          
+          logger.info(`Successfully generated image with ${model}`);
+          return {
+            images: [{
+              base64,
+              mimeType: "image/jpeg",
+            }],
+          };
+        }
       }
-    );
-    
-    if (!response.ok) {
-      // If HuggingFace fails, fallback to Pollinations
-      logger.warn(`HuggingFace API error: ${response.status} ${response.statusText}, falling back to Pollinations`);
-      return generateImageWithPollinations(options);
+      
+      logger.warn(`Model ${model} failed or returned invalid data, trying next...`);
+    } catch (error) {
+      logger.warn(`Model ${model} error:`, error);
+      continue;
     }
-    
-    // Response is a blob (image)
-    const arrayBuffer = await response.arrayBuffer();
-    const base64 = Buffer.from(arrayBuffer).toString("base64");
-    
-    return {
-      images: [{
-        base64,
-        mimeType: "image/jpeg",
-      }],
-    };
-  } catch (error) {
-    logger.error("HuggingFace image generation error:", error);
-    // Fallback to Pollinations on any error
-    logger.info("Falling back to Pollinations.ai");
-    return generateImageWithPollinations(options);
   }
+  
+  // If all HuggingFace models fail, fallback to Pollinations
+  logger.info("All HuggingFace models failed, falling back to Pollinations.ai");
+  return generateImageWithPollinations(options);
 };
 
 export const generateImageWithNanoBanana = async (
