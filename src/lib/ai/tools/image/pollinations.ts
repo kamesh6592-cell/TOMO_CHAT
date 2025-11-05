@@ -79,10 +79,6 @@ export const pollinationsImageTool = createTool({
         images: resultImages,
         mode,
         model: "pollinations-ai (FREE)",
-        guide:
-          resultImages.length > 0
-            ? "🎨 The image has been successfully generated using Pollinations.ai (completely FREE, no API key needed)! If you need any modifications or want to generate another image, please let me know."
-            : "I apologize, but the image generation was not successful. Please try providing a more detailed description of what you'd like to see.",
       };
     } catch (e) {
       logger.error(e);

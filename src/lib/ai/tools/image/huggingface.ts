@@ -76,17 +76,13 @@ export const huggingFaceImageTool = createTool({
         .unwrap();
 
       const modelName = process.env.HUGGINGFACE_API_KEY 
-        ? "stable-diffusion-xl (HuggingFace FREE tier)" 
+        ? "fast-sdxl (HuggingFace FREE tier)" 
         : "pollinations-ai (FREE fallback)";
 
       return {
         images: resultImages,
         mode,
         model: modelName,
-        guide:
-          resultImages.length > 0
-            ? `🎨 The image has been successfully generated using ${modelName}! If you need any modifications or want to generate another image, please let me know.`
-            : "I apologize, but the image generation was not successful. Please try providing a more detailed description of what you'd like to see.",
       };
     } catch (e) {
       logger.error(e);
