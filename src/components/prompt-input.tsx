@@ -534,21 +534,6 @@ export default function PromptInput({
                       <DropdownMenuPortal>
                         <DropdownMenuSubContent>
                           <DropdownMenuItem
-                            onClick={() => handleGenerateImage("pollinations")}
-                            className="cursor-pointer"
-                          >
-                            <ImagesIcon className="mr-2 size-4 text-green-500" />
-                            Pollinations.ai (FREE 🆓)
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleGenerateImage("huggingface")}
-                            className="cursor-pointer"
-                          >
-                            <ImagesIcon className="mr-2 size-4 text-yellow-500" />
-                            HuggingFace (FREE tier 🆓)
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
                             disabled={modelInfo?.isToolCallUnsupported}
                             onClick={() => handleGenerateImage("google")}
                             className="cursor-pointer"
@@ -562,15 +547,7 @@ export default function PromptInput({
                             className="cursor-pointer"
                           >
                             <OpenAIIcon className="mr-2 size-4" />
-                            OpenAI
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            disabled={modelInfo?.isToolCallUnsupported}
-                            onClick={() => handleGenerateImage("openrouter")}
-                            className="cursor-pointer"
-                          >
-                            <ImagesIcon className="mr-2 size-4" />
-                            OpenRouter (Gemini)
+                            OpenAI (Azure DALL-E-3)
                           </DropdownMenuItem>
                         </DropdownMenuSubContent>
                       </DropdownMenuPortal>

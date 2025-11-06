@@ -89,7 +89,7 @@ interface ToolSelectDropdownProps {
   mentions?: ChatMention[];
   onSelectWorkflow?: (workflow: WorkflowSummary) => void;
   onSelectAgent?: (agent: AgentSummary) => void;
-  onGenerateImage?: (provider?: "google" | "openai" | "openrouter" | "pollinations" | "huggingface") => void;
+  onGenerateImage?: (provider?: "google" | "openai") => void;
   className?: string;
 }
 
@@ -1051,7 +1051,7 @@ function ImageGeneratorSelector({
   onGenerateImage,
   modelInfo,
 }: {
-  onGenerateImage?: (provider?: "google" | "openai" | "openrouter" | "pollinations" | "huggingface") => void;
+  onGenerateImage?: (provider?: "google" | "openai") => void;
   modelInfo?: { isToolCallUnsupported?: boolean };
 }) {
   const t = useTranslations("Chat");
@@ -1066,21 +1066,6 @@ function ImageGeneratorSelector({
         <DropdownMenuPortal>
           <DropdownMenuSubContent>
             <DropdownMenuItem
-              onClick={() => onGenerateImage?.("pollinations")}
-              className="cursor-pointer"
-            >
-              <ImagesIcon className="mr-2 size-4 text-green-500" />
-              Pollinations.ai (FREE 🆓)
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => onGenerateImage?.("huggingface")}
-              className="cursor-pointer"
-            >
-              <ImagesIcon className="mr-2 size-4 text-yellow-500" />
-              HuggingFace (FREE tier 🆓)
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
               disabled={modelInfo?.isToolCallUnsupported}
               onClick={() => onGenerateImage?.("google")}
               className="cursor-pointer"
@@ -1094,15 +1079,7 @@ function ImageGeneratorSelector({
               className="cursor-pointer"
             >
               <OpenAIIcon className="mr-2 size-4" />
-              OpenAI
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              disabled={modelInfo?.isToolCallUnsupported}
-              onClick={() => onGenerateImage?.("openrouter")}
-              className="cursor-pointer"
-            >
-              <ImagesIcon className="mr-2 size-4" />
-              OpenRouter (Gemini)
+              OpenAI (Azure DALL-E-3)
             </DropdownMenuItem>
           </DropdownMenuSubContent>
         </DropdownMenuPortal>

@@ -4,7 +4,6 @@ import { createOllama } from "ollama-ai-provider-v2";
 import { openai } from "@ai-sdk/openai";
 import { google } from "@ai-sdk/google";
 import { anthropic } from "@ai-sdk/anthropic";
-import { xai } from "@ai-sdk/xai";
 import { LanguageModelV2, openrouter } from "@openrouter/ai-sdk-provider";
 import { createGroq } from "@ai-sdk/groq";
 import { LanguageModel } from "ai";
@@ -18,8 +17,8 @@ import {
   OPENAI_FILE_MIME_TYPES,
   GEMINI_FILE_MIME_TYPES,
   ANTHROPIC_FILE_MIME_TYPES,
-  XAI_FILE_MIME_TYPES,
 } from "./file-support";
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 
 const ollama = createOllama({
   baseURL: process.env.OLLAMA_BASE_URL || "http://localhost:11434/api",
@@ -27,6 +26,44 @@ const ollama = createOllama({
 const groq = createGroq({
   baseURL: process.env.GROQ_BASE_URL || "https://api.groq.com/openai/v1",
   apiKey: process.env.GROQ_API_KEY,
+});
+
+// Azure-hosted models with Bearer token authentication
+const azureApiKey = process.env.AZURE_API_KEY;
+if (!azureApiKey) {
+  throw new Error("AZURE_API_KEY is not set. Please configure it in your .env file for DeepSeek and Grok models.");
+}
+const azureBaseURL = process.env.AZURE_BASE_URL || "https://flook.services.ai.azure.com/models";
+
+const customFetchAzure = async (
+  input: URL | RequestInfo,
+  init?: RequestInit,
+): Promise<Response> => {
+  const headers = {
+    ...(init?.headers || {}),
+    "Authorization": `Bearer ${azureApiKey}`,
+    "Content-Type": "application/json",
+  };
+  
+  return fetch(input, {
+    ...init,
+    headers,
+  });
+};
+
+// Create Azure-hosted providers
+const azureDeepseek = createOpenAICompatible({
+  name: "azure-deepseek",
+  apiKey: azureApiKey,
+  baseURL: azureBaseURL,
+  fetch: customFetchAzure,
+});
+
+const azureGrok = createOpenAICompatible({
+  name: "azure-grok",
+  apiKey: azureApiKey,
+  baseURL: azureBaseURL,
+  fetch: customFetchAzure,
 });
 
 const staticModels = {
@@ -52,10 +89,11 @@ const staticModels = {
     "opus-4.1": anthropic("claude-opus-4-1"),
   },
   xai: {
-    "grok-4-fast": xai("grok-4-fast-non-reasoning"),
-    "grok-4": xai("grok-4"),
-    "grok-3": xai("grok-3"),
-    "grok-3-mini": xai("grok-3-mini"),
+    "grok-4-fast-non-reasoning": azureGrok("grok-4-fast-non-reasoning"),
+    "grok-3": azureGrok("grok-3"),
+  },
+  deepseek: {
+    "DeepSeek-R1": azureDeepseek("DeepSeek-R1"),
   },
   ollama: {
     "gemma3:1b": ollama("gemma3:1b"),
@@ -143,10 +181,9 @@ registerFileSupport(
   ANTHROPIC_FILE_MIME_TYPES,
 );
 
-registerFileSupport(staticModels.xai["grok-4-fast"], XAI_FILE_MIME_TYPES);
-registerFileSupport(staticModels.xai["grok-4"], XAI_FILE_MIME_TYPES);
-registerFileSupport(staticModels.xai["grok-3"], XAI_FILE_MIME_TYPES);
-registerFileSupport(staticModels.xai["grok-3-mini"], XAI_FILE_MIME_TYPES);
+registerFileSupport(staticModels.xai["grok-4-fast-non-reasoning"], DEFAULT_FILE_PART_MIME_TYPES);
+registerFileSupport(staticModels.xai["grok-3"], DEFAULT_FILE_PART_MIME_TYPES);
+registerFileSupport(staticModels.deepseek["DeepSeek-R1"], DEFAULT_FILE_PART_MIME_TYPES);
 registerFileSupport(
   staticModels.openRouter["gemini-2.0-flash-exp:free"],
   GEMINI_FILE_MIME_TYPES,
@@ -212,7 +249,9 @@ function checkProviderAPIKey(provider: keyof typeof staticModels) {
       key = process.env.ANTHROPIC_API_KEY;
       break;
     case "xai":
-      key = process.env.XAI_API_KEY;
+    case "deepseek":
+      // Both use Azure endpoint with hardcoded key
+      key = azureApiKey;
       break;
     case "groq":
       key = process.env.GROQ_API_KEY;

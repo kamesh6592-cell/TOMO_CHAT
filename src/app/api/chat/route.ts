@@ -19,6 +19,7 @@ import {
   buildMcpServerCustomizationsSystemPrompt,
   buildUserSystemPrompt,
   buildToolCallUnsupportedModelSystemPrompt,
+  buildDeepSeekReasoningPrompt,
 } from "lib/ai/prompts";
 import {
   chatApiSchemaRequestBodySchema,
@@ -47,7 +48,7 @@ import {
 import { getSession } from "auth/server";
 import { colorize } from "consola/utils";
 import { generateUUID } from "lib/utils";
-import { nanoBananaTool, openaiImageTool, openRouterImageTool, pollinationsImageTool, huggingFaceImageTool } from "lib/ai/tools/image";
+import { nanoBananaTool, openaiImageTool } from "lib/ai/tools/image";
 import { ImageToolName } from "lib/ai/tools";
 import { buildCsvIngestionPreviewParts } from "@/lib/ai/ingest/csv-ingest";
 import { serverFileStorage } from "lib/file-storage";
@@ -269,10 +270,14 @@ export async function POST(request: Request) {
           .map((v) => filterMcpServerCustomizations(MCP_TOOLS!, v))
           .orElse({});
 
+        // Check if using DeepSeek reasoning model
+        const isDeepSeekModel = chatModel?.provider === "deepseek";
+
         const systemPrompt = mergeSystemPrompt(
           buildUserSystemPrompt(session.user, userPreferences, agent),
           buildMcpServerCustomizationsSystemPrompt(mcpServerCustomizations),
           !supportToolCall && buildToolCallUnsupportedModelSystemPrompt,
+          isDeepSeekModel && buildDeepSeekReasoningPrompt(),
         );
 
         const IMAGE_TOOL: Record<string, Tool> = useImageTool
@@ -282,13 +287,7 @@ export async function POST(request: Request) {
                   ? nanoBananaTool
                   : imageTool?.model === "openai"
                   ? openaiImageTool
-                  : imageTool?.model === "openrouter"
-                  ? openRouterImageTool
-                  : imageTool?.model === "pollinations"
-                  ? pollinationsImageTool
-                  : imageTool?.model === "huggingface"
-                  ? huggingFaceImageTool
-                  : pollinationsImageTool, // Default to free Pollinations
+                  : nanoBananaTool, // Default to Gemini
             }
           : {};
         const vercelAITooles = safe({
