@@ -39,6 +39,7 @@ const SMTP_CONFIG = {
 };
 
 const EMAIL_FROM = process.env.EMAIL_FROM || "noreply@ajstudioz.co.in";
+const EMAIL_FROM_WITH_NAME = `AJ STUDIOZ <${EMAIL_FROM}>`;
 const BASE_URL =
   process.env.BETTER_AUTH_URL ||
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -194,12 +195,12 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
 
     // Use Resend if configured and selected
     if (EMAIL_PROVIDER === "resend" && RESEND_API_KEY) {
-      logger.info(`Sending via Resend from ${EMAIL_FROM}`);
+      logger.info(`Sending via Resend from ${EMAIL_FROM_WITH_NAME}`);
       const resend = getResendClient();
 
       const { data, error } = await resend.emails.send({
-        from: EMAIL_FROM,
-        to: options.to,
+        from: EMAIL_FROM_WITH_NAME,
+        to: [options.to],
         subject: options.subject,
         html: options.html,
         text: options.text || stripHtml(options.html),
