@@ -86,20 +86,46 @@ const options = {
     enabled: emailAndPasswordEnabled,
     disableSignUp: !signUpEnabled,
     sendResetPassword: async ({ user, url }) => {
-      logger.info(
-        `Sending password reset email to ${user.email} with URL: ${url}`,
-      );
-      // Better Auth provides full URL already, pass it directly
-      await sendPasswordResetEmail(user.email, url, user.name);
+      try {
+        logger.info(
+          `Sending password reset email to ${user.email} with URL: ${url}`,
+        );
+        // Better Auth provides full URL already, pass it directly
+        const result = await sendPasswordResetEmail(user.email, url, user.name);
+        if (!result) {
+          logger.error(`Failed to send password reset email to ${user.email}`);
+        } else {
+          logger.info(
+            `Successfully sent password reset email to ${user.email}`,
+          );
+        }
+      } catch (error) {
+        logger.error(
+          `Error sending password reset email to ${user.email}:`,
+          error,
+        );
+      }
     },
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
-      logger.info(
-        `Sending verification email to ${user.email} with URL: ${url}`,
-      );
-      // Better Auth provides full URL already, pass it directly
-      await sendVerificationEmail(user.email, url, user.name);
+      try {
+        logger.info(
+          `Sending verification email to ${user.email} with URL: ${url}`,
+        );
+        // Better Auth provides full URL already, pass it directly
+        const result = await sendVerificationEmail(user.email, url, user.name);
+        if (!result) {
+          logger.error(`Failed to send verification email to ${user.email}`);
+        } else {
+          logger.info(`Successfully sent verification email to ${user.email}`);
+        }
+      } catch (error) {
+        logger.error(
+          `Error sending verification email to ${user.email}:`,
+          error,
+        );
+      }
     },
     sendOnSignUp: true,
   },

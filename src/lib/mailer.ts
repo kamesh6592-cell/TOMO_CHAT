@@ -6,6 +6,13 @@ import logger from "logger";
 // Email provider type
 const EMAIL_PROVIDER = process.env.EMAIL_PROVIDER || "smtp"; // 'smtp' or 'resend'
 
+// Log configuration on startup
+logger.info(`Email provider configured: ${EMAIL_PROVIDER}`);
+logger.info(
+  `Email from address: ${process.env.EMAIL_FROM || "noreply@ajstudioz.co.in"}`,
+);
+logger.info(`Resend API key configured: ${!!process.env.RESEND_API_KEY}`);
+
 // Resend configuration
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 let resendClient: Resend | null = null;
@@ -178,8 +185,16 @@ interface EmailOptions {
  */
 export async function sendEmail(options: EmailOptions): Promise<boolean> {
   try {
+    logger.info(
+      `Attempting to send email to ${options.to} with subject: ${options.subject}`,
+    );
+    logger.info(
+      `Using provider: ${EMAIL_PROVIDER}, Resend API Key: ${!!RESEND_API_KEY}`,
+    );
+
     // Use Resend if configured and selected
     if (EMAIL_PROVIDER === "resend" && RESEND_API_KEY) {
+      logger.info(`Sending via Resend from ${EMAIL_FROM}`);
       const resend = getResendClient();
 
       const { data, error } = await resend.emails.send({
@@ -191,7 +206,7 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
       });
 
       if (error) {
-        logger.error("Failed to send email via Resend:", error);
+        logger.error("Failed to send email via Resend:", JSON.stringify(error));
         return false;
       }
 
@@ -200,6 +215,7 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
     }
 
     // Fallback to SMTP
+    logger.info(`Sending via SMTP from ${EMAIL_FROM}`);
     const transport = getTransporter();
 
     const info = await transport.sendMail({
