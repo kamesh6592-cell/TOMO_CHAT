@@ -92,7 +92,7 @@ export default function SignIn({
                   value={formData.email}
                   onChange={(e) => setFormData({ email: e.target.value })}
                   type="email"
-                  placeholder="user@example.com"
+                  placeholder="user@ajstudioz.co.in"
                   required
                 />
               </div>

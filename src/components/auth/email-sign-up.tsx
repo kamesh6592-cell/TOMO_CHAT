@@ -132,7 +132,7 @@ export default function EmailSignUp({
               <Input
                 id="email"
                 type="email"
-                placeholder="mcp@example.com"
+                placeholder="user@ajstudioz.co.in"
                 disabled={isLoading}
                 autoFocus
                 value={formData.email}

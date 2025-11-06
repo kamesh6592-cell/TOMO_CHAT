@@ -87,13 +87,17 @@ const options = {
     disableSignUp: !signUpEnabled,
     sendResetPassword: async ({ user, url }) => {
       logger.info(`Sending password reset email to ${user.email}`);
-      await sendPasswordResetEmail(user.email, url, user.name);
+      // Better Auth provides full URL, extract token or use full URL
+      const token = url.split("token=")[1] || url;
+      await sendPasswordResetEmail(user.email, token, user.name);
     },
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
       logger.info(`Sending verification email to ${user.email}`);
-      await sendVerificationEmail(user.email, url, user.name);
+      // Better Auth provides full URL, extract token or use full URL
+      const token = url.split("token=")[1] || url;
+      await sendVerificationEmail(user.email, token, user.name);
     },
     sendOnSignUp: true,
   },
