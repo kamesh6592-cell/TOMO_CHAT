@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Send test emails based on type
+    // Send test emails based on type (with delays to avoid rate limiting)
     if (emailType === "all" || emailType === "verification") {
       logger.info("Sending verification email...");
       // Use a proper test URL format
@@ -80,11 +80,15 @@ export async function GET(request: NextRequest) {
         verifyUrl,
         "Test User",
       );
+      if (emailType === "all")
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 1s delay
     }
 
     if (emailType === "all" || emailType === "welcome") {
       logger.info("Sending welcome email...");
       results.welcome = await sendWelcomeEmail(toEmail, "Test User");
+      if (emailType === "all")
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 1s delay
     }
 
     if (emailType === "all" || emailType === "reset") {
@@ -96,6 +100,8 @@ export async function GET(request: NextRequest) {
         resetUrl,
         "Test User",
       );
+      if (emailType === "all")
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 1s delay
     }
 
     if (emailType === "all" || emailType === "login") {
