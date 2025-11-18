@@ -16,7 +16,7 @@ import logger from "logger";
 import { userRepository } from "lib/db/repository";
 import { DEFAULT_USER_ROLE, USER_ROLES } from "app-types/roles";
 import { admin, editor, user, ac } from "./roles";
-import { sendVerificationEmail, sendPasswordResetEmail } from "lib/mailer";
+import { sendVerificationEmail as sendVerifyEmail, sendPasswordResetEmail } from "lib/mailer";
 
 const {
   emailAndPasswordEnabled,
@@ -115,31 +115,33 @@ const options = {
     },
   },
   emailVerification: {
-    enabled: true,
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
-    sendVerificationEmail: async ({ user, url }) => {
-      console.log(`[AUTH HOOK] sendVerificationEmail called for ${user.email}`);
+    sendVerificationEmail: async ({ user, url, token }) => {
+      console.log(`[AUTH HOOK] ✉️ sendVerificationEmail CALLED for ${user.email}`);
+      console.log(`[AUTH HOOK] URL: ${url}`);
+      console.log(`[AUTH HOOK] Token: ${token}`);
+      
       try {
         logger.info(
-          `[AUTH] Sending verification email to ${user.email} with URL: ${url}`,
+          `[AUTH] 📧 Sending verification email to ${user.email} with URL: ${url}`,
         );
         console.log(`[AUTH] Email config - Provider: ${process.env.EMAIL_PROVIDER}, From: ${process.env.EMAIL_FROM}`);
         
         // Better Auth provides full URL already, pass it directly
-        const result = await sendVerificationEmail(user.email, url, user.name);
+        const result = await sendVerifyEmail(user.email, url, user.name);
         
         if (!result) {
-          const errorMsg = `Failed to send verification email to ${user.email}`;
+          const errorMsg = `❌ Failed to send verification email to ${user.email}`;
           logger.error(errorMsg);
           console.error(`[AUTH ERROR] ${errorMsg}`);
           // Don't throw error - let user sign in and resend email later
         } else {
-          logger.info(`[AUTH] Successfully sent verification email to ${user.email}`);
-          console.log(`[AUTH SUCCESS] Verification email sent to ${user.email}`);
+          logger.info(`[AUTH] ✅ Successfully sent verification email to ${user.email}`);
+          console.log(`[AUTH SUCCESS] ✅ Verification email sent to ${user.email}`);
         }
       } catch (error) {
-        const errorMsg = `Error sending verification email to ${user.email}`;
+        const errorMsg = `💥 Error sending verification email to ${user.email}`;
         logger.error(errorMsg, error);
         console.error(`[AUTH EXCEPTION] ${errorMsg}`, error);
         // Don't throw error - let user sign in and resend email later
