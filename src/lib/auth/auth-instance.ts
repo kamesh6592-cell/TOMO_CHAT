@@ -79,6 +79,47 @@ const options = {
             },
           };
         },
+        after: async (user) => {
+          // Send welcome email AFTER user is created (works for both email/password and OAuth)
+          console.log(`[DB HOOK] 📧 New user created: ${user.email}`);
+          console.log(`[DB HOOK] User data:`, { id: user.id, email: user.email, name: user.name, emailVerified: user.emailVerified });
+          
+          try {
+            // Import sendWelcomeEmail
+            const { sendWelcomeEmail } = await import('lib/mailer');
+            
+            // For OAuth users (Google, GitHub, etc.), email is already verified
+            // So send welcome email instead of verification email
+            if (user.emailVerified) {
+              console.log(`[DB HOOK] 📧 OAuth user detected (email already verified), sending welcome email...`);
+              const result = await sendWelcomeEmail(user.email, user.name || undefined);
+              
+              if (result) {
+                console.log(`[DB HOOK] ✅ Welcome email sent to ${user.email}`);
+                logger.info(`Welcome email sent to OAuth user: ${user.email}`);
+              } else {
+                console.error(`[DB HOOK] ❌ Failed to send welcome email to ${user.email}`);
+                logger.error(`Failed to send welcome email to OAuth user: ${user.email}`);
+              }
+            } else {
+              // For email/password users, send verification email
+              console.log(`[DB HOOK] 📧 Email/password user detected, sending verification email...`);
+              const verificationUrl = `${process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_BASE_URL}/verify?email=${encodeURIComponent(user.email)}`;
+              const result = await sendVerifyEmail(user.email, verificationUrl, user.name || undefined);
+              
+              if (result) {
+                console.log(`[DB HOOK] ✅ Verification email sent to ${user.email}`);
+                logger.info(`Verification email sent to new user: ${user.email}`);
+              } else {
+                console.error(`[DB HOOK] ❌ Failed to send verification email to ${user.email}`);
+                logger.error(`Failed to send verification email to new user: ${user.email}`);
+              }
+            }
+          } catch (error) {
+            console.error(`[DB HOOK] 💥 Error sending email:`, error);
+            logger.error(`Error sending email to ${user.email}:`, error);
+          }
+        },
       },
     },
   },
@@ -114,40 +155,8 @@ const options = {
       }
     },
   },
-  emailVerification: {
-    sendOnSignUp: false, // Disabled - not working with Better Auth hooks
-    autoSignInAfterVerification: false,
-    sendVerificationEmail: async ({ user, url, token }) => {
-      console.log(`[AUTH HOOK] ✉️ sendVerificationEmail CALLED for ${user.email}`);
-      console.log(`[AUTH HOOK] URL: ${url}`);
-      console.log(`[AUTH HOOK] Token: ${token}`);
-      
-      try {
-        logger.info(
-          `[AUTH] 📧 Sending verification email to ${user.email} with URL: ${url}`,
-        );
-        console.log(`[AUTH] Email config - Provider: ${process.env.EMAIL_PROVIDER}, From: ${process.env.EMAIL_FROM}`);
-        
-        // Better Auth provides full URL already, pass it directly
-        const result = await sendVerifyEmail(user.email, url, user.name);
-        
-        if (!result) {
-          const errorMsg = `❌ Failed to send verification email to ${user.email}`;
-          logger.error(errorMsg);
-          console.error(`[AUTH ERROR] ${errorMsg}`);
-          // Don't throw error - let user sign in and resend email later
-        } else {
-          logger.info(`[AUTH] ✅ Successfully sent verification email to ${user.email}`);
-          console.log(`[AUTH SUCCESS] ✅ Verification email sent to ${user.email}`);
-        }
-      } catch (error) {
-        const errorMsg = `💥 Error sending verification email to ${user.email}`;
-        logger.error(errorMsg, error);
-        console.error(`[AUTH EXCEPTION] ${errorMsg}`, error);
-        // Don't throw error - let user sign in and resend email later
-      }
-    },
-  },
+  // Email verification disabled - we handle it via database hooks instead
+  // Better Auth's emailVerification hooks don't fire reliably in v1.3.x
   session: {
     cookieCache: {
       enabled: true,
