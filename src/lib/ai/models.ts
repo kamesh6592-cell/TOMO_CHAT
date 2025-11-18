@@ -7,6 +7,8 @@ import { anthropic } from "@ai-sdk/anthropic";
 import { LanguageModelV2, openrouter } from "@openrouter/ai-sdk-provider";
 import { createGroq } from "@ai-sdk/groq";
 import { LanguageModel } from "ai";
+import { mistral } from "@ai-sdk/mistral";
+import { cohere } from "@ai-sdk/cohere";
 import {
   createOpenAICompatibleModels,
   openaiCompatibleModelsSafeParse,
@@ -27,6 +29,24 @@ const groq = createGroq({
   baseURL: process.env.GROQ_BASE_URL || "https://api.groq.com/openai/v1",
   apiKey: process.env.GROQ_API_KEY,
 });
+
+// HuggingFace - Completely FREE inference API
+const huggingface = process.env.HUGGINGFACE_API_KEY
+  ? createOpenAICompatible({
+      name: "huggingface",
+      apiKey: process.env.HUGGINGFACE_API_KEY,
+      baseURL: "https://api-inference.huggingface.co/v1",
+    })
+  : null;
+
+// Together AI - Free tier with generous limits
+const together = process.env.TOGETHER_API_KEY
+  ? createOpenAICompatible({
+      name: "together",
+      apiKey: process.env.TOGETHER_API_KEY,
+      baseURL: "https://api.together.xyz/v1",
+    })
+  : null;
 
 // Azure-hosted models with Bearer token authentication
 const azureApiKey = process.env.AZURE_API_KEY;
@@ -110,6 +130,40 @@ const staticModels = {
     "deepseek-v3:free": openrouter("deepseek/deepseek-chat-v3-0324:free"),
     "gemini-2.0-flash-exp:free": openrouter("google/gemini-2.0-flash-exp:free"),
   },
+  huggingface: huggingface
+    ? {
+        "llama-3.1-8b": huggingface("meta-llama/Llama-3.1-8B-Instruct"),
+        "llama-3.3-70b": huggingface("meta-llama/Llama-3.3-70B-Instruct"),
+        "qwen2.5-72b": huggingface("Qwen/Qwen2.5-72B-Instruct"),
+        "mistral-7b": huggingface("mistralai/Mistral-7B-Instruct-v0.3"),
+        "phi-3.5-mini": huggingface("microsoft/Phi-3.5-mini-instruct"),
+      }
+    : {},
+  together: together
+    ? {
+        "llama-3.1-8b": together("meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo"),
+        "llama-3.1-70b": together("meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"),
+        "llama-3.1-405b": together("meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo"),
+        "qwen2.5-72b": together("Qwen/Qwen2.5-72B-Instruct-Turbo"),
+        "mistral-7b": together("mistralai/Mistral-7B-Instruct-v0.3"),
+        "deepseek-r1-671b": together("deepseek-ai/DeepSeek-R1"),
+      }
+    : {},
+  mistral: process.env.MISTRAL_API_KEY
+    ? {
+        "mistral-large": mistral("mistral-large-latest"),
+        "mistral-small": mistral("mistral-small-latest"),
+        "codestral": mistral("codestral-latest"),
+        "pixtral-12b": mistral("pixtral-12b-2409"),
+      }
+    : {},
+  cohere: process.env.COHERE_API_KEY
+    ? {
+        "command-r-plus": cohere("command-r-plus"),
+        "command-r": cohere("command-r"),
+        "command-light": cohere("command-light"),
+      }
+    : {},
 };
 
 const staticUnsupportedModels = new Set([
@@ -122,6 +176,10 @@ const staticUnsupportedModels = new Set([
   staticModels.openRouter["qwen3-14b:free"],
   staticModels.openRouter["deepseek-r1:free"],
   staticModels.openRouter["gemini-2.0-flash-exp:free"],
+  // HuggingFace models (some may have limited tool support)
+  ...(staticModels.huggingface ? Object.values(staticModels.huggingface) : []),
+  // Together AI reasoning models
+  ...(staticModels.together?.["deepseek-r1-671b"] ? [staticModels.together["deepseek-r1-671b"]] : []),
 ]);
 
 const staticSupportImageInputModels = {
@@ -258,6 +316,18 @@ function checkProviderAPIKey(provider: keyof typeof staticModels) {
       break;
     case "openRouter":
       key = process.env.OPENROUTER_API_KEY;
+      break;
+    case "huggingface":
+      key = process.env.HUGGINGFACE_API_KEY;
+      break;
+    case "together":
+      key = process.env.TOGETHER_API_KEY;
+      break;
+    case "mistral":
+      key = process.env.MISTRAL_API_KEY;
+      break;
+    case "cohere":
+      key = process.env.COHERE_API_KEY;
       break;
     default:
       return true; // assume the provider has an API key
