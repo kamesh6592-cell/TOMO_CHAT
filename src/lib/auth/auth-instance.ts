@@ -115,7 +115,11 @@ const options = {
     },
   },
   emailVerification: {
+    enabled: true,
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
+      console.log(`[AUTH HOOK] sendVerificationEmail called for ${user.email}`);
       try {
         logger.info(
           `[AUTH] Sending verification email to ${user.email} with URL: ${url}`,
@@ -141,8 +145,6 @@ const options = {
         // Don't throw error - let user sign in and resend email later
       }
     },
-    sendOnSignUp: true,
-    autoSignInAfterVerification: true,
   },
   session: {
     cookieCache: {
