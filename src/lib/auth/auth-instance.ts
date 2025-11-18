@@ -66,10 +66,11 @@ const options = {
             console.log(`[SESSION HOOK] 🔐 New session created for user: ${session.userId}`);
             
             // Get user details
+            const { eq } = await import('drizzle-orm');
             const [user] = await pgDb
               .select()
               .from(UserTable)
-              .where((table) => table.id === session.userId)
+              .where(eq(UserTable.id, session.userId))
               .limit(1);
             
             if (!user || !user.email) {
