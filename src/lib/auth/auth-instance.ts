@@ -115,8 +115,8 @@ const options = {
     },
   },
   emailVerification: {
-    sendOnSignUp: true,
-    autoSignInAfterVerification: true,
+    sendOnSignUp: false, // Disabled - not working with Better Auth hooks
+    autoSignInAfterVerification: false,
     sendVerificationEmail: async ({ user, url, token }) => {
       console.log(`[AUTH HOOK] ✉️ sendVerificationEmail CALLED for ${user.email}`);
       console.log(`[AUTH HOOK] URL: ${url}`);
