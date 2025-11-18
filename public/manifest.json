@@ -1,11 +1,13 @@
 {
-  "name": "TOMO",
+  "name": "TOMO - AI Chat Assistant",
   "short_name": "TOMO",
-  "description": "TOMO is an AI-powered chatbot that uses advanced tools to answer questions.",
+  "description": "TOMO is an advanced AI-powered chat assistant with intelligent tools, voice chat, and real-time assistance.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "theme_color": "#667eea",
   "icons": [
     {
       "src": "/aj-logo.jpg",
