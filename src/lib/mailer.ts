@@ -198,6 +198,7 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
       logger.info(`Sending via Resend from ${EMAIL_FROM_WITH_NAME}`);
       const resend = getResendClient();
 
+      logger.info(`Resend API call starting...`);
       const { data, error } = await resend.emails.send({
         from: EMAIL_FROM_WITH_NAME,
         to: [options.to],
@@ -208,10 +209,13 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
 
       if (error) {
         logger.error("Failed to send email via Resend:", JSON.stringify(error));
+        logger.error("Error details:", error);
+        console.error("RESEND ERROR FULL:", error);
         return false;
       }
 
       logger.info(`Email sent via Resend: ${data?.id} to ${options.to}`);
+      console.log("RESEND SUCCESS:", data);
       return true;
     }
 
