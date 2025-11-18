@@ -14,6 +14,7 @@ import {
 import { PanelLeft } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { isShortcutEvent, Shortcuts } from "lib/keyboard-shortcuts";
+import { useTheme } from "next-themes";
 
 interface SidebarHeaderSharedProps {
   title: string | React.ReactNode;
@@ -34,6 +35,8 @@ export function SidebarHeaderShared({
   const isMobile = useIsMobile();
   const pathname = usePathname();
   const currentPath = useRef<string | null>(null);
+  const { theme, resolvedTheme } = useTheme();
+  const currentTheme = resolvedTheme || theme;
 
   // Handle shortcuts (only for main app sidebar)
   useEffect(() => {
@@ -78,7 +81,7 @@ export function SidebarHeaderShared({
                 className="rounded-full"
               />
               <Image 
-                src="/tomo-brand-name.png" 
+                src={currentTheme === "dark" ? "/tomo-brand-name-dark.png" : "/tomo-brand-name-light.png"} 
                 alt="TOMO" 
                 width={80} 
                 height={24} 
