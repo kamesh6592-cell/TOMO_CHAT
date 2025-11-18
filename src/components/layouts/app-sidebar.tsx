@@ -39,7 +39,7 @@ export function AppSidebar({
       className="border-r border-sidebar-border/80"
     >
       <SidebarHeaderShared
-        title="AJ STUDIOZ"
+        title="TOMO"
         href="/"
         enableShortcuts={true}
         onLinkClick={() => {

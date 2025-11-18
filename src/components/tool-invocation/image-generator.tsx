@@ -180,17 +180,17 @@ function PureImageGeneratorToolInvocation({
               }}
             />
 
-            {/* AJ STUDIOZ Logo Watermark */}
+            {/* TOMO Logo Watermark */}
             {loadedImages.has(0) && (
               <div className="absolute bottom-2 left-2 flex items-center gap-1.5 bg-black/60 backdrop-blur-md rounded-full px-2 py-1 border border-white/10">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/favicon-96x96.png"
-                  alt="AJ STUDIOZ"
+                  alt="TOMO"
                   className="w-4 h-4 rounded-full"
                 />
                 <span className="text-[9px] font-semibold text-white/90 tracking-wide">
-                  AJ STUDIOZ
+                  TOMO
                 </span>
               </div>
             )}

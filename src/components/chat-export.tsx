@@ -42,13 +42,13 @@ export function ChatExport({ messages, chatTitle }: ChatExportProps) {
     setIsExporting(true);
     try {
       let markdown = `# ${chatTitle || "Chat Export"}\n\n`;
-      markdown += `**Exported from AJ STUDIOZ**\n`;
+      markdown += `**Exported from TOMO**\n`;
       markdown += `**Date:** ${formatDate()}\n`;
       markdown += `**Total Messages:** ${messages.length}\n\n`;
       markdown += `---\n\n`;
 
       messages.forEach((message, index) => {
-        const role = message.role === "user" ? "You" : "AJ STUDIOZ";
+        const role = message.role === "user" ? "You" : "TOMO";
         markdown += `## ${role}\n\n`;
 
         // Extract text from parts
@@ -65,14 +65,14 @@ export function ChatExport({ messages, chatTitle }: ChatExportProps) {
       });
 
       markdown += `\n---\n\n`;
-      markdown += `*This chat was exported from AJ STUDIOZ - Your AI Assistant*\n`;
-      markdown += `*Visit: https://aj-studioz.com*\n`;
+      markdown += `*This chat was exported from TOMO - Your AI Assistant*\n`;
+      markdown += `*Visit: https://tomo.com*\n`;
 
       const blob = new Blob([markdown], { type: "text/markdown" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `aj-studioz-chat-${Date.now()}.md`;
+      a.download = `tomo-chat-${Date.now()}.md`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -105,7 +105,7 @@ export function ChatExport({ messages, chatTitle }: ChatExportProps) {
       doc.setTextColor(255, 255, 255);
       doc.setFontSize(24);
       doc.setFont("helvetica", "bold");
-      doc.text("AJ STUDIOZ", margin, 25);
+      doc.text("TOMO", margin, 25);
 
       doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
@@ -134,7 +134,7 @@ export function ChatExport({ messages, chatTitle }: ChatExportProps) {
 
       for (let i = 0; i < messages.length; i++) {
         const message = messages[i];
-        const role = message.role === "user" ? "You" : "AJ STUDIOZ";
+        const role = message.role === "user" ? "You" : "TOMO";
 
         // Check if we need a new page
         if (yPosition > pageHeight - 40) {
@@ -191,14 +191,14 @@ export function ChatExport({ messages, chatTitle }: ChatExportProps) {
       doc.setTextColor(150, 150, 150);
       doc.setFont("helvetica", "italic");
       doc.text(
-        "Powered by AJ STUDIOZ - Visit us at https://aj-studioz.com",
+        "Powered by TOMO - Visit us at https://tomo.com",
         pageWidth / 2,
         yPosition,
         { align: "center" },
       );
 
       // Save PDF
-      doc.save(`aj-studioz-chat-${Date.now()}.pdf`);
+      doc.save(`tomo-chat-${Date.now()}.pdf`);
 
       setExportSuccess(true);
       setTimeout(() => setExportSuccess(false), 2000);

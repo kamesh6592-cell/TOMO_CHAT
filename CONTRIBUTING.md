@@ -1,6 +1,6 @@
-# Contributing to AJ STUDIOZ
+# Contributing to TOMO
 
-Thank you for your interest in contributing to AJ STUDIOZ! We welcome contributions from the community and truly appreciate your effort to improve the project.
+Thank you for your interest in contributing to TOMO! We welcome contributions from the community and truly appreciate your effort to improve the project.
 
 ---
 
@@ -195,5 +195,5 @@ When submitting **Issues** or **Pull Requests**:
 
 ---
 
-We sincerely appreciate your contribution to AJ STUDIOZ.
+We sincerely appreciate your contribution to TOMO.
 Let’s build a powerful, well tested and lightweight AI experience together! 🚀

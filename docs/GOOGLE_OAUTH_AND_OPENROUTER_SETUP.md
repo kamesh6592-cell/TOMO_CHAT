@@ -1,6 +1,6 @@
 # Google OAuth and OpenRouter Image Generation Setup
 
-This guide explains how to enable Google OAuth authentication and OpenRouter image generation in your AJ STUDIOZ application.
+This guide explains how to enable Google OAuth authentication and OpenRouter image generation in your TOMO application.
 
 ## Google OAuth Authentication Setup
 
@@ -185,4 +185,4 @@ For issues or questions:
 
 ---
 
-**Built with ❤️ by AJ STUDIOZ**
+**Built with ❤️ by TOMO**

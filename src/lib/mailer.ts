@@ -39,7 +39,7 @@ const SMTP_CONFIG = {
 };
 
 const EMAIL_FROM = process.env.EMAIL_FROM || "noreply@ajstudioz.co.in";
-const EMAIL_FROM_WITH_NAME = `AJ STUDIOZ <${EMAIL_FROM}>`;
+const EMAIL_FROM_WITH_NAME = `TOMO <${EMAIL_FROM}>`;
 const BASE_URL =
   process.env.BETTER_AUTH_URL ||
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -292,7 +292,7 @@ export async function sendVerificationEmail(
           </p>
         </div>
         <div class="footer">
-          <p>Sent with ❤️ from AJ STUDIOZ</p>
+          <p>Sent with ❤️ from TOMO</p>
           <p>&copy; ${new Date().getFullYear()} All rights reserved.</p>
         </div>
       </div>

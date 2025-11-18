@@ -18,9 +18,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AJ STUDIOZ",
+  title: "TOMO",
   description:
-    "AJ STUDIOZ is an AI-powered chatbot that uses advanced tools to answer questions.",
+    "TOMO is an AI-powered chatbot that uses advanced tools to answer questions.",
   metadataBase: new URL('https://hello-its.vercel.app'),
   icons: {
     icon: [
@@ -34,10 +34,10 @@ export const metadata: Metadata = {
   },
   manifest: '/manifest.json',
   openGraph: {
-    title: 'AJ STUDIOZ',
-    description: 'AJ STUDIOZ is an AI-powered chatbot that uses advanced tools to answer questions.',
+    title: 'TOMO',
+    description: 'TOMO is an AI-powered chatbot that uses advanced tools to answer questions.',
     url: 'https://hello-its.vercel.app',
-    siteName: 'AJ STUDIOZ',
+    siteName: 'TOMO',
     locale: 'en_US',
     type: 'website',
     images: [
@@ -45,14 +45,14 @@ export const metadata: Metadata = {
         url: '/aj-logo.jpg',
         width: 512,
         height: 512,
-        alt: 'AJ STUDIOZ Logo',
+        alt: 'TOMO Logo',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AJ STUDIOZ',
-    description: 'AJ STUDIOZ is an AI-powered chatbot that uses advanced tools to answer questions.',
+    title: 'TOMO',
+    description: 'TOMO is an AI-powered chatbot that uses advanced tools to answer questions.',
     images: ['/aj-logo.jpg'],
   },
 };

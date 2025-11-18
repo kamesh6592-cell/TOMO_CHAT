@@ -1,8 +1,8 @@
 {
-  "name": "aj-studioz",
+  "name": "tomo",
   "version": "1.25.0",
   "private": true,
-  "author": "AJ STUDIOZ",
+  "author": "TOMO",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -41,9 +41,9 @@
     "docker-compose:logs": "docker-compose -f docker/compose.yml logs -f",
     "docker-compose:ps": "docker-compose -f docker/compose.yml ps",
     "docker-compose:update": "git pull && docker-compose -f docker/compose.yml up -d --build",
-    "docker:pg": "docker run --name aj-studioz-pg -e POSTGRES_PASSWORD=your_password -e POSTGRES_USER=your_username -e POSTGRES_DB=your_database_name -p 5432:5432 -d postgres",
-    "docker:redis": "docker run --name aj-studioz-redis -p 6379:6379 -d redis:7-alpine",
-    "docker:app": "docker build -f docker/Dockerfile -t aj-studioz . && docker run -p 3000:3000 -e NO_HTTPS=1 aj-studioz",
+    "docker:pg": "docker run --name tomo-pg -e POSTGRES_PASSWORD=your_password -e POSTGRES_USER=your_username -e POSTGRES_DB=your_database_name -p 5432:5432 -d postgres",
+    "docker:redis": "docker run --name tomo-redis -p 6379:6379 -d redis:7-alpine",
+    "docker:app": "docker build -f docker/Dockerfile -t tomo . && docker run -p 3000:3000 -e NO_HTTPS=1 tomo",
     "prepare": "husky",
     "playwright:install": "playwright install",
     "check": "pnpm lint:fix && pnpm check-types && pnpm test"
