@@ -40,11 +40,11 @@ export default function SignUpPage({
         {/* Logo */}
         <div className="flex justify-center mb-2">
           <Image
-            src="/tomo-brand-name-dark.png"
-            alt="TOMO"
+            src="/aj-logo.jpg"
+            alt="AJ Mailer"
             width={120}
-            height={40}
-            className="object-contain"
+            height={120}
+            className="object-contain rounded-full"
             priority
           />
         </div>

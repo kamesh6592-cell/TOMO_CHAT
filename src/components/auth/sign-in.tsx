@@ -73,6 +73,17 @@ export default function SignIn({
 
         {/* Content */}
         <div className="relative p-8 flex flex-col space-y-6">
+          {/* Logo */}
+          <div className="flex justify-center mb-2">
+            <img
+              src="/aj-logo.jpg"
+              alt="AJ Mailer"
+              width={120}
+              height={120}
+              className="object-contain rounded-full"
+            />
+          </div>
+          
           <div className="text-center space-y-2">
             <h1 className="text-2xl font-semibold text-white">Welcome Back</h1>
             <p className="text-white/70">Sign in to your account</p>

@@ -31,15 +31,6 @@ const groq = createGroq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
-// HuggingFace - Completely FREE inference API
-const huggingface = process.env.HUGGINGFACE_API_KEY
-  ? createOpenAICompatible({
-      name: "huggingface",
-      apiKey: process.env.HUGGINGFACE_API_KEY,
-      baseURL: "https://api-inference.huggingface.co/v1",
-    })
-  : null;
-
 // Together AI - Free tier with generous limits
 const together = process.env.TOGETHER_API_KEY
   ? createOpenAICompatible({
@@ -157,15 +148,6 @@ const staticModels = {
     "deepseek-v3:free": openrouter("deepseek/deepseek-chat-v3-0324:free"),
     "gemini-2.0-flash-exp:free": openrouter("google/gemini-2.0-flash-exp:free"),
   },
-  huggingface: huggingface
-    ? {
-        "llama-3.1-8b": huggingface("meta-llama/Llama-3.1-8B-Instruct"),
-        "llama-3.3-70b": huggingface("meta-llama/Llama-3.3-70B-Instruct"),
-        "qwen2.5-72b": huggingface("Qwen/Qwen2.5-72B-Instruct"),
-        "mistral-7b": huggingface("mistralai/Mistral-7B-Instruct-v0.3"),
-        "phi-3.5-mini": huggingface("microsoft/Phi-3.5-mini-instruct"),
-      }
-    : {},
   together: together
     ? {
         "llama-3.1-8b": together("meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo"),
@@ -202,8 +184,6 @@ const staticUnsupportedModels = new Set([
   staticModels.openRouter["qwen3-14b:free"],
   staticModels.openRouter["deepseek-r1:free"],
   staticModels.openRouter["gemini-2.0-flash-exp:free"],
-  // HuggingFace models (some may have limited tool support)
-  ...(staticModels.huggingface ? Object.values(staticModels.huggingface) : []),
   // Together AI reasoning models
   ...(staticModels.together?.["deepseek-r1-671b"] ? [staticModels.together["deepseek-r1-671b"]] : []),
 ]);
@@ -337,9 +317,6 @@ function checkProviderAPIKey(provider: keyof typeof staticModels) {
       break;
     case "openRouter":
       key = process.env.OPENROUTER_API_KEY;
-      break;
-    case "huggingface":
-      key = process.env.HUGGINGFACE_API_KEY;
       break;
     case "together":
       key = process.env.TOGETHER_API_KEY;
