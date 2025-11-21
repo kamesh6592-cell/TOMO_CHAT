@@ -39,11 +39,12 @@ export default function SignUpPage({
         {/* Logo */}
         <div className="flex justify-center mb-2">
           <img
-            src="/aj-logo.jpg"
+            src="/aj-logo.jpg?v=2"
             alt="AJ Mailer"
             width={120}
             height={120}
             className="object-cover rounded-full"
+            style={{ display: 'block' }}
           />
         </div>
 
