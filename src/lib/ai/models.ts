@@ -53,6 +53,16 @@ const azureApiKey = process.env.AZURE_API_KEY;
 const azureBaseURL =
   process.env.AZURE_BASE_URL || "https://flook.services.ai.azure.com/models";
 
+// Azure OpenAI Chat Completions endpoint
+const azureOpenAIChatApiKey = process.env.AZURE_OPENAI_CHAT_API_KEY || process.env.AZURE_API_KEY;
+const azureOpenAIChatBaseURL = process.env.AZURE_OPENAI_CHAT_BASE_URL || 
+  "https://kamesh6592-7068-resource.cognitiveservices.azure.com/openai/deployments";
+
+// Azure OpenAI Responses endpoint (for GPT-5-mini)
+const azureOpenAIResponsesApiKey = process.env.AZURE_OPENAI_RESPONSES_API_KEY || process.env.AZURE_API_KEY;
+const azureOpenAIResponsesBaseURL = process.env.AZURE_OPENAI_RESPONSES_BASE_URL || 
+  "https://kamesh6592-7068-resource.cognitiveservices.azure.com/openai";
+
 // Create Azure-hosted providers (SDK will append /chat/completions)
 const azureDeepseek = azureApiKey
   ? createOpenAICompatible({
@@ -76,15 +86,40 @@ const azureGrok = azureApiKey
     })
   : null;
 
+// Azure OpenAI for GPT-4o-mini (standard chat completions)
+const azureOpenAIChat = azureOpenAIChatApiKey
+  ? createOpenAICompatible({
+      name: "azure-openai-chat",
+      apiKey: azureOpenAIChatApiKey,
+      baseURL: azureOpenAIChatBaseURL,
+      headers: {
+        Authorization: `Bearer ${azureOpenAIChatApiKey}`,
+      },
+    })
+  : null;
+
+// Azure OpenAI for GPT-5-mini (responses endpoint)
+const azureOpenAIResponses = azureOpenAIResponsesApiKey
+  ? createOpenAICompatible({
+      name: "azure-openai-responses",
+      apiKey: azureOpenAIResponsesApiKey,
+      baseURL: azureOpenAIResponsesBaseURL,
+      headers: {
+        Authorization: `Bearer ${azureOpenAIResponsesApiKey}`,
+      },
+    })
+  : null;
+
 const staticModels = {
   openai: {
+    "gpt-4o-mini": azureOpenAIChat ? azureOpenAIChat("gpt-4o-mini") : openai("gpt-4o-mini"),
+    "gpt-5-mini": azureOpenAIResponses ? azureOpenAIResponses("gpt-5-mini") : openai("gpt-5-mini"),
     "gpt-4.1": openai("gpt-4.1"),
     "gpt-4.1-mini": openai("gpt-4.1-mini"),
     "o4-mini": openai("o4-mini"),
     o3: openai("o3"),
     "gpt-5-chat": openai("gpt-5-chat-latest"),
     "gpt-5": openai("gpt-5"),
-    "gpt-5-mini": openai("gpt-5-mini"),
     "gpt-5-codex": openai("gpt-5-codex"),
     "gpt-5-nano": openai("gpt-5-nano"),
   },
@@ -202,6 +237,7 @@ const registerFileSupport = (
   staticFilePartSupportByModel.set(model, Array.from(mimeTypes));
 };
 
+registerFileSupport(staticModels.openai["gpt-4o-mini"], OPENAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.openai["gpt-4.1"], OPENAI_FILE_MIME_TYPES);
 registerFileSupport(
   staticModels.openai["gpt-4.1-mini"],
