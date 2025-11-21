@@ -40,27 +40,49 @@ const SMTP_CONFIG = {
 };
 
 const EMAIL_FROM = process.env.EMAIL_FROM || "noreply@tomoacademy.site";
-const EMAIL_FROM_WITH_NAME = `TOMO CHAT <${EMAIL_FROM}>`;
+const EMAIL_FROM_WITH_NAME = `TOMO <${EMAIL_FROM}>`;
 const BASE_URL =
   process.env.BETTER_AUTH_URL ||
   process.env.NEXT_PUBLIC_BASE_URL ||
   "http://localhost:3000";
-const LOGO_URL = "https://z-cdn-media.chatglm.cn/files/531d6781-d4fe-4528-b212-7bb657ffe656_aj-logo.jpg?auth_key=1763706080-d71c75270015490eadd199ee8fc860f0-0-5e8ce0b447263e908ab11329a900513e";
 
-// Helper function to get location from IP
-async function getLocationFromIP(ipAddress: string): Promise<{ city?: string; country?: string; region?: string; location?: string }> {
+// Helper function to generate email header with logo
+function getEmailHeader(title: string): string {
+  return `
+    <div class="logo">
+      <img src="https://z-cdn-media.chatglm.cn/files/531d6781-d4fe-4528-b212-7bb657ffe656_aj-logo.jpg?auth_key=1763706080-d71c75270015490eadd199ee8fc860f0-0-5e8ce0b447263e908ab11329a900513e" alt="TOMO Logo">
+    </div>
+    
+    <h1>${title}</h1>
+  `;
+}
+
+// Helper function to generate user profile section
+function getUserProfile(userName?: string, userImage?: string): string {
+  if (!userName && !userImage) return '';
+ 
+  return `
+    <div class="user-profile">
+      ${userImage ? `<img src="${userImage}" alt="${userName || 'User'}" />` : ''}
+      ${userName ? `<div class="user-name">${userName}</div>` : ''}
+    </div>
+  `;
+}
+
+// Helper function to get location from IP and generate map
+async function getLocationFromIP(ipAddress: string): Promise<{ city?: string; country?: string; lat?: number; lon?: number; location?: string }> {
   try {
     // Use ip-api.com free geolocation API (no key required)
-    const response = await fetch(`http://ip-api.com/json/${ipAddress}?fields=status,country,regionName,city`);
+    const response = await fetch(`http://ip-api.com/json/${ipAddress}?fields=status,country,city,lat,lon`);
     const data = await response.json();
-    
+   
     if (data.status === 'success') {
-      const location = [data.city, data.regionName].filter(Boolean).join(', ');
       return {
         city: data.city,
-        region: data.regionName,
         country: data.country,
-        location: location || data.country,
+        lat: data.lat,
+        lon: data.lon,
+        location: `${data.city}, ${data.country}`,
       };
     }
   } catch (error) {
@@ -93,7 +115,7 @@ function getTransporter(): Transporter {
   return transporter;
 }
 
-// Email templates with clean, professional design
+// Email templates with updated design
 const emailStyles = `
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -131,19 +153,6 @@ const emailStyles = `
   .details p {
     margin: 5px 0;
   }
-  .button {
-    display: inline-block;
-    padding: 12px 24px;
-    background-color: #007bff;
-    color: #ffffff !important;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: 500;
-    margin: 15px 0;
-  }
-  .button:hover {
-    background-color: #0056b3;
-  }
   .footer {
     margin-top: 30px;
     padding-top: 20px;
@@ -158,18 +167,48 @@ const emailStyles = `
   a:hover {
     text-decoration: underline;
   }
+  .button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #000;
+    color: white !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    margin: 15px 0;
+    transition: background-color 0.2s;
+  }
+  .button:hover {
+    background-color: #333;
+    text-decoration: none;
+  }
   .code-box {
     background-color: #f9f9f9;
     border: 1px solid #ddd;
-    border-radius: 5px;
+    border-radius: 4px;
     padding: 15px;
     margin: 20px 0;
     font-family: 'Monaco', 'Courier New', monospace;
-    font-size: 24px;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 700;
     text-align: center;
-    color: #333;
-    letter-spacing: 4px;
+    letter-spacing: 2px;
+  }
+  .user-profile {
+    text-align: center;
+    margin: 20px 0;
+  }
+  .user-profile img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    object-fit: cover;
+  }
+  .user-profile .user-name {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: 600;
   }
 `;
 
@@ -262,36 +301,37 @@ export async function sendVerificationEmail(
     <!DOCTYPE html>
     <html lang="en">
     <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Verify Your Email</title>
-      <style>${emailStyles}</style>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Verify Your Email</title>
+        <style>${emailStyles}</style>
     </head>
     <body>
-      <div class="logo">
-        <img src="${LOGO_URL}" alt="TOMO CHAT Logo">
-      </div>
-      
-      <h1>Verify your email address</h1>
-      
-      <p>Hi${userName ? ` ${userName}` : ""},</p>
-      
-      <p>Thanks for signing up! To complete your registration and start using your account, please verify your email address by clicking the button below:</p>
-      
-      <a href="${verificationUrl}" class="button">Verify Email Address</a>
-      
-      <p>Or copy and paste this link into your browser:</p>
-      <p style="word-break: break-all; font-size: 14px; color: #007bff;">${verificationUrl}</p>
-      
-      <p style="font-size: 14px; color: #777;">This verification link will expire in 24 hours. If you didn't create an account, you can safely ignore this email.</p>
-      
-      <p>So long, and thanks for all the fish,</p>
-      <p><strong>The TOMO CHAT Team</strong></p>
-      
-      <div class="footer">
-        <p>© ${new Date().getFullYear()} TOMO CHAT LLC</p>
-        <p>For questions contact <a href="mailto:${EMAIL_FROM}">${EMAIL_FROM}</a></p>
-      </div>
+        ${getEmailHeader('Verify Your Email')}
+        
+        <p>Hi${userName ? ` ${userName}` : ""},</p>
+        
+        <p>Thanks for signing up! We're excited to have you on board.</p>
+        
+        <p>To complete your registration and start using your account, please verify your email address by clicking the button below:</p>
+        
+        <div style="text-align: center;">
+            <a href="${verificationUrl}" class="button">Verify Email Address</a>
+        </div>
+        
+        <div class="details">
+            <p><strong>Alternative:</strong> If the button doesn't work, copy and paste this link into your browser:</p>
+            <p style="word-break: break-all; font-size: 14px;">${verificationUrl}</p>
+        </div>
+        
+        <p style="font-size: 14px; color: #777;">
+            This verification link will expire in 24 hours. If you didn't create an account, you can safely ignore this email.
+        </p>
+        
+        <div class="footer">
+            <p>© ${new Date().getFullYear()} TOMO Academy</p>
+            <p>For questions contact <a href="mailto:support@tomoacademy.site">support@tomoacademy.site</a></p>
+        </div>
     </body>
     </html>
   `;
@@ -315,40 +355,35 @@ export async function sendWelcomeEmail(
     <!DOCTYPE html>
     <html lang="en">
     <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Welcome</title>
-      <style>${emailStyles}</style>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Welcome to TOMO</title>
+        <style>${emailStyles}</style>
     </head>
     <body>
-      <div class="logo">
-        <img src="${LOGO_URL}" alt="TOMO CHAT Logo">
-      </div>
-      
-      <h1>Welcome aboard!</h1>
-      
-      <p>Hi${userName ? ` ${userName}` : ""},</p>
-      
-      <p>Your email has been verified successfully. You're all set to start using your account!</p>
-      
-      <p>Here are some quick tips to get you started:</p>
-      <ul>
-        <li>Complete your profile to personalize your experience</li>
-        <li>Explore our features and tools</li>
-        <li>Check out our documentation and guides</li>
-      </ul>
-      
-      <a href="${BASE_URL}/dashboard" class="button">Go to Dashboard</a>
-      
-      <p>If you have any questions, feel free to reach out to our support team.</p>
-      
-      <p>So long, and thanks for all the fish,</p>
-      <p><strong>The TOMO CHAT Team</strong></p>
-      
-      <div class="footer">
-        <p>© ${new Date().getFullYear()} TOMO CHAT LLC</p>
-        <p>For questions contact <a href="mailto:${EMAIL_FROM}">${EMAIL_FROM}</a></p>
-      </div>
+        ${getEmailHeader('Welcome to TOMO!')}
+        ${getUserProfile(userName, userImage)}
+        
+        <p>Hi${userName ? ` ${userName}` : ""},</p>
+        
+        <p>Your email has been verified successfully. You're all set to start using your account!</p>
+        
+        <p>Here are some quick tips to get you started:</p>
+        <ul style="color: #333; line-height: 1.8;">
+            <li>Complete your profile to personalize your experience</li>
+            <li>Explore our features and tools</li>
+            <li>Check out our documentation and guides</li>
+            <li>Join our community and connect with other users</li>
+        </ul>
+        
+        <div style="text-align: center;">
+            <a href="${BASE_URL}/dashboard" class="button">Go to Dashboard</a>
+        </div>
+        
+        <div class="footer">
+            <p>© ${new Date().getFullYear()} TOMO Academy</p>
+            <p>For questions contact <a href="mailto:support@tomoacademy.site">support@tomoacademy.site</a></p>
+        </div>
     </body>
     </html>
   `;
@@ -378,38 +413,38 @@ export async function sendPasswordResetEmail(
     <!DOCTYPE html>
     <html lang="en">
     <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Reset Your Password</title>
-      <style>${emailStyles}</style>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Reset Your Password</title>
+        <style>${emailStyles}</style>
     </head>
     <body>
-      <div class="logo">
-        <img src="${LOGO_URL}" alt="TOMO CHAT Logo">
-      </div>
-      
-      <h1>Reset your password</h1>
-      
-      <p>Hi${userName ? ` ${userName}` : ""},</p>
-      
-      <p>We received a request to reset the password for your account. If you didn't make this request, you can safely ignore this email.</p>
-      
-      <p>To reset your password, click the button below:</p>
-      
-      <a href="${resetUrl}" class="button">Reset Password</a>
-      
-      <p>Or copy and paste this link into your browser:</p>
-      <p style="word-break: break-all; font-size: 14px; color: #007bff;">${resetUrl}</p>
-      
-      <p style="font-size: 14px; color: #777;">This password reset link will expire in 1 hour for security reasons. If you didn't request a password reset, please contact support.</p>
-      
-      <p>So long, and thanks for all the fish,</p>
-      <p><strong>The TOMO CHAT Team</strong></p>
-      
-      <div class="footer">
-        <p>© ${new Date().getFullYear()} TOMO CHAT LLC</p>
-        <p>For questions contact <a href="mailto:${EMAIL_FROM}">${EMAIL_FROM}</a></p>
-      </div>
+        ${getEmailHeader('Reset Your Password')}
+        ${getUserProfile(userName, userImage)}
+        
+        <p>Hi${userName ? ` ${userName}` : ""},</p>
+        
+        <p>We received a request to reset the password for your account. If you didn't make this request, you can safely ignore this email.</p>
+        
+        <p>To reset your password, click the button below:</p>
+        
+        <div style="text-align: center;">
+            <a href="${resetUrl}" class="button">Reset Password</a>
+        </div>
+        
+        <div class="details">
+            <p><strong>Alternative:</strong> If the button doesn't work, copy and paste this link into your browser:</p>
+            <p style="word-break: break-all; font-size: 14px;">${resetUrl}</p>
+        </div>
+        
+        <p style="font-size: 14px; color: #777;">
+            This password reset link will expire in 1 hour for security reasons. If you didn't request a password reset, please ignore this email or contact support if you have concerns.
+        </p>
+        
+        <div class="footer">
+            <p>© ${new Date().getFullYear()} TOMO Academy</p>
+            <p>For questions contact <a href="mailto:support@tomoacademy.site">support@tomoacademy.site</a></p>
+        </div>
     </body>
     </html>
   `;
@@ -436,52 +471,49 @@ export async function sendLoginNotificationEmail(
   },
 ): Promise<boolean> {
   const timestamp = loginDetails?.timestamp || new Date();
-  
-  // Get location data from IP address (real data)
-  let finalLocation = loginDetails?.location || 'Unknown';
-  if (loginDetails?.ipAddress && loginDetails.ipAddress !== 'Unknown' && !loginDetails.ipAddress.includes('::1') && !loginDetails.ipAddress.includes('127.0.0.1')) {
-    const fetchedLocation = await getLocationFromIP(loginDetails.ipAddress);
-    if (fetchedLocation.location) {
-      finalLocation = fetchedLocation.location;
-    }
+ 
+  // Get location data from IP address
+  let locationData: { city?: string; country?: string; lat?: number; lon?: number; location?: string } = {};
+  if (loginDetails?.ipAddress && loginDetails.ipAddress !== 'Unknown') {
+    locationData = await getLocationFromIP(loginDetails.ipAddress);
   }
-
+ 
+  // Use fetched location or fallback to provided location
+  const finalLocation = locationData.location || loginDetails?.location || 'Unknown';
+  
   const html = `
     <!DOCTYPE html>
     <html lang="en">
     <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>New Login Alert</title>
-      <style>${emailStyles}</style>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>New Login Alert</title>
+        <style>${emailStyles}</style>
     </head>
     <body>
-      <div class="logo">
-        <img src="${LOGO_URL}" alt="TOMO CHAT Logo">
-      </div>
-      
-      <h1>We've noticed a new login</h1>
-      
-      <p>Hi${userName ? ` ${userName}` : ""},</p>
-      
-      <p>This is a routine security alert. Someone logged into your TOMO CHAT account${loginDetails?.ipAddress ? ' from a new IP address:' : '.'}</p>
-      
-      <div class="details">
-        <p><strong>Time:</strong> ${timestamp.toUTCString()}</p>
-        ${loginDetails?.ipAddress ? `<p><strong>IP address:</strong> ${loginDetails.ipAddress}</p>` : ''}
-        ${finalLocation && finalLocation !== 'Unknown' ? `<p><strong>Location:</strong> ${finalLocation}</p>` : ''}
-        ${loginDetails?.userAgent ? `<p><strong>Browser:</strong> ${loginDetails.userAgent}</p>` : ''}
-      </div>
-      
-      <p>If this was you, you can ignore this alert. If you noticed any suspicious activity on your account, please <a href="${BASE_URL}/reset-password">change your password</a> and <a href="${BASE_URL}/settings/security">enable two-factor authentication</a> on your <a href="${BASE_URL}/settings">account page</a>.</p>
-      
-      <p>So long, and thanks for all the fish,</p>
-      <p><strong>The TOMO CHAT Team</strong></p>
-      
-      <div class="footer">
-        <p>© ${new Date().getFullYear()} TOMO CHAT LLC</p>
-        <p>For questions contact <a href="mailto:${EMAIL_FROM}">${EMAIL_FROM}</a></p>
-      </div>
+        ${getEmailHeader('We\'ve noticed a new login')}
+        ${getUserProfile(userName, loginDetails?.userImage)}
+        
+        <p>Hi${userName ? ` ${userName}` : ""},</p>
+        
+        <p>This is a routine security alert. Someone logged into your TOMO account from a new IP address:</p>
+        
+        <div class="details">
+            <p><strong>Time:</strong> ${timestamp.toUTCString()}</p>
+            ${loginDetails?.ipAddress ? `<p><strong>IP address:</strong> ${loginDetails.ipAddress}</p>` : ''}
+            <p><strong>Location:</strong> ${finalLocation}</p>
+            ${loginDetails?.userAgent ? `<p><strong>Browser:</strong> ${loginDetails.userAgent}</p>` : ''}
+        </div>
+        
+        <p>If this was you, you can ignore this alert. If you noticed any suspicious activity on your account, please <a href="${BASE_URL}/reset-password">change your password</a> and <a href="${BASE_URL}/settings/security">enable two-factor authentication</a> on your <a href="${BASE_URL}/settings/security">account page</a>.</p>
+        
+        <p>So long, and thanks for all the fish,</p>
+        <p><strong>The TOMO Team</strong></p>
+        
+        <div class="footer">
+            <p>© ${new Date().getFullYear()} TOMO Academy</p>
+            <p>For questions contact <a href="mailto:support@tomoacademy.site">support@tomoacademy.site</a></p>
+        </div>
     </body>
     </html>
   `;
@@ -505,49 +537,37 @@ export async function sendEmailChangeVerification(
 
   const html = `
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <style>${emailStyles}</style>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Verify Email Change</title>
+        <style>${emailStyles}</style>
     </head>
     <body>
-      <div class="container">
-        <div style="text-align: center; margin-bottom: 30px;">
-          <img src="${LOGO_URL}" alt="Logo" style="width: 80px; height: 80px; border-radius: 50%;">
+        ${getEmailHeader('Verify Email Change')}
+        
+        <p>Hi${userName ? ` ${userName}` : ""},</p>
+        
+        <p>You recently requested to change your email address. To confirm this change, please verify your new email address by clicking the button below:</p>
+        
+        <div style="text-align: center;">
+            <a href="${verificationUrl}" class="button">Verify New Email</a>
         </div>
-
-        <h1 style="color: #333; font-size: 24px; margin-bottom: 20px;">Verify Your New Email Address</h1>
-
-        <p style="color: #333; line-height: 1.6; margin-bottom: 20px;">
-          Hi${userName ? ` ${userName}` : ""}!
-        </p>
-
-        <p style="color: #333; line-height: 1.6; margin-bottom: 20px;">
-          You recently requested to change your email address. To confirm this change, please verify your new email address by clicking the button below:
-        </p>
-
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${verificationUrl}" style="display: inline-block; padding: 12px 30px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; font-weight: 500;">Verify New Email</a>
+        
+        <div class="details">
+            <p><strong>Alternative:</strong> If the button doesn't work, copy and paste this link into your browser:</p>
+            <p style="word-break: break-all; font-size: 14px;">${verificationUrl}</p>
         </div>
-
-        <p style="color: #666; line-height: 1.6; margin-bottom: 10px; font-size: 14px;">
-          Or copy and paste this link into your browser:
+        
+        <p style="font-size: 14px; color: #777;">
+            This verification link will expire in 24 hours. If you didn't request an email change, please contact support immediately.
         </p>
-        <p style="color: #007bff; line-height: 1.6; margin-bottom: 30px; word-break: break-all; font-size: 14px;">
-          ${verificationUrl}
-        </p>
-
-        <div style="background-color: #f9f9f9; padding: 15px; border-left: 4px solid #007bff; margin: 20px 0;">
-          <p style="color: #333; margin: 0; font-size: 14px;">
-            <strong>Note:</strong> This verification link will expire in 24 hours. If you didn't request an email change, please contact support immediately.
-          </p>
-        </div>
-
+        
         <div class="footer">
-          <p>&copy; ${new Date().getFullYear()} TOMO CHAT Team. All rights reserved.</p>
+            <p>© ${new Date().getFullYear()} TOMO Academy</p>
+            <p>For questions contact <a href="mailto:support@tomoacademy.site">support@tomoacademy.site</a></p>
         </div>
-      </div>
     </body>
     </html>
   `;
