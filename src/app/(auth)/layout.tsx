@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 export default async function AuthLayout({
   children,
 }: { children: React.ReactNode }) {
@@ -20,28 +18,6 @@ export default async function AuthLayout({
       <div className="flex-1 flex items-center justify-center w-full">
         {children}
       </div>
-
-      <footer className="relative z-10 mb-6">
-        <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl px-6 py-4">
-          <div className="flex items-center justify-center gap-3">
-            <Image
-              src="/aj-logo.jpg"
-              alt="AJ STUDIOZ"
-              width={32}
-              height={32}
-              className="rounded-full object-cover"
-            />
-            <div className="text-center">
-              <p className="text-white/90 text-sm font-medium">
-                TOMO
-              </p>
-              <p className="text-white/60 text-xs">
-                Powered by AJ STUDIOZ
-              </p>
-            </div>
-          </div>
-        </div>
-      </footer>
     </main>
   );
 }

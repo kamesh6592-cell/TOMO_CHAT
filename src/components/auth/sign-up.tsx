@@ -107,6 +107,18 @@ export default function SignUpPage({
             </Link>
           </p>
         </div>
+
+        {/* AJ STUDIOZ Footer */}
+        <div className="text-center mt-6 pt-4 border-t border-white/10">
+          <div className="flex items-center justify-center gap-2 text-white/70 text-sm">
+            <span>Designed by</span>
+            <span className="animate-pulse text-red-500 text-base">❤️</span>
+            <div className="flex items-center gap-1.5">
+              <img src="/AJ.svg" alt="AJ" className="w-5 h-5" />
+              <span className="font-semibold text-white">AJ STUDIOZ</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
