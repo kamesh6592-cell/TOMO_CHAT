@@ -97,108 +97,140 @@ export function ChatExport({ messages, chatTitle }: ChatExportProps) {
       const contentWidth = pageWidth - 2 * margin;
       let yPosition = 20;
 
-      // Header with branding
-      doc.setFillColor(59, 130, 246); // Primary blue
-      doc.rect(0, 0, pageWidth, 40, "F");
-
-      // Logo text (you can replace with actual logo image)
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(24);
-      doc.setFont("helvetica", "bold");
-      doc.text("TOMO", margin, 25);
-
-      doc.setFontSize(10);
-      doc.setFont("helvetica", "normal");
-      doc.text("Your AI Assistant", margin, 32);
-
-      yPosition = 55;
-
-      // Title
-      doc.setTextColor(0, 0, 0);
+      // Perplexity-style Logo with hexagon shape
+      doc.setFillColor(13, 148, 136); // Teal
+      const hexSize = 4;
+      const hexX = margin + hexSize;
+      const hexY = yPosition - 1;
+      // Draw hexagon approximation
+      doc.triangle(hexX - hexSize, hexY, hexX, hexY - hexSize, hexX + hexSize, hexY, "F");
+      doc.triangle(hexX - hexSize, hexY, hexX, hexY + hexSize, hexX + hexSize, hexY, "F");
+      
+      doc.setTextColor(31, 41, 55); // Dark gray
       doc.setFontSize(18);
-      doc.setFont("helvetica", "bold");
-      doc.text(chatTitle || "Chat Export", margin, yPosition);
-      yPosition += 10;
-
-      // Metadata
-      doc.setFontSize(9);
       doc.setFont("helvetica", "normal");
-      doc.setTextColor(100, 100, 100);
-      doc.text(`Exported: ${formatDate()}`, margin, yPosition);
-      yPosition += 5;
-      doc.text(`Total Messages: ${messages.length}`, margin, yPosition);
+      doc.text("perplexity", margin + 12, yPosition);
+      
       yPosition += 15;
 
-      // Messages
-      doc.setTextColor(0, 0, 0);
+      // Main title - exactly like image
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(17, 24, 39); // Near black
+      const titleText = chatTitle || "Chat Export from TOMO";
+      doc.text(titleText, margin, yPosition);
+      yPosition += 7;
 
+      // Subtitle - gray descriptive text
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(75, 85, 99); // Medium gray
+      doc.text(`Here is your exported conversation.`, margin, yPosition);
+      yPosition += 15;
+
+      // Process messages - each as numbered section
+      let messageCount = 0;
       for (let i = 0; i < messages.length; i++) {
         const message = messages[i];
-        const role = message.role === "user" ? "You" : "TOMO";
-
-        // Check if we need a new page
-        if (yPosition > pageHeight - 40) {
-          doc.addPage();
-          yPosition = margin;
-        }
-
-        // Role header
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "bold");
-        if (message.role === "user") {
-          doc.setTextColor(59, 130, 246); // Blue for user
-        } else {
-          doc.setTextColor(34, 197, 94); // Green for assistant
-        }
-        doc.text(role, margin, yPosition);
-        yPosition += 8;
-
-        // Message content
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "normal");
-        doc.setTextColor(0, 0, 0);
-
-        // Extract text from parts
+        
+        // Only show non-empty messages
         const textContent =
           message.parts
             ?.filter((part: any) => part.type === "text")
             .map((part: any) => part.text)
             .join("\n\n") || "";
 
-        const lines = doc.splitTextToSize(textContent, contentWidth);
+        if (!textContent.trim()) continue;
+        
+        messageCount++;
+
+        // Check if we need a new page
+        if (yPosition > pageHeight - 60) {
+          doc.addPage();
+          yPosition = margin;
+        }
+
+        // Section number/header - bold, black
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(17, 24, 39);
+        const role = message.role === "user" ? "Question" : "Response";
+        doc.text(`${messageCount}) ${role}`, margin, yPosition);
+        yPosition += 8;
+
+        // Code-style box for content
+        const lines = doc.splitTextToSize(textContent, contentWidth - 10);
+        const boxHeight = lines.length * 4.5 + 8;
+
+        // Light gray background box
+        doc.setFillColor(249, 250, 251); // Very light gray
+        doc.setDrawColor(229, 231, 235); // Light border
+        doc.roundedRect(margin, yPosition - 2, contentWidth, boxHeight, 2, 2, "FD");
+
+        // Message text - monospace style
+        doc.setFontSize(8);
+        doc.setFont("courier", "normal");
+        doc.setTextColor(31, 41, 55); // Dark gray text
+
+        let lineY = yPosition + 3;
         for (const line of lines) {
-          if (yPosition > pageHeight - 40) {
+          if (lineY > pageHeight - 30) {
             doc.addPage();
-            yPosition = margin;
+            lineY = margin;
           }
-          doc.text(line, margin, yPosition);
-          yPosition += 5;
+          doc.text(line, margin + 5, lineY);
+          lineY += 4.5;
         }
 
-        yPosition += 10; // Space between messages
-
-        // Divider
-        if (i < messages.length - 1) {
-          doc.setDrawColor(220, 220, 220);
-          doc.line(margin, yPosition, pageWidth - margin, yPosition);
-          yPosition += 10;
-        }
+        yPosition = lineY + 5;
       }
 
-      // Footer on last page
-      yPosition = pageHeight - 20;
+      // Footer section - exactly like perplexity
+      if (yPosition > pageHeight - 50) {
+        doc.addPage();
+        yPosition = margin;
+      }
+
+      yPosition += 10;
+
+      // Suggestion text (like "If you say which level...")
       doc.setFontSize(8);
-      doc.setTextColor(150, 150, 150);
-      doc.setFont("helvetica", "italic");
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(107, 114, 128);
       doc.text(
-        "Powered by TOMO - Visit us at https://tomo.com",
-        pageWidth / 2,
-        yPosition,
-        { align: "center" },
+        `Exported from TOMO Chat on ${formatDate()}. Total messages: ${messageCount}`,
+        margin,
+        yPosition
       );
+      yPosition += 15;
+
+      // Separator line
+      doc.setDrawColor(229, 231, 235);
+      doc.line(margin, yPosition, pageWidth - margin, yPosition);
+      yPosition += 15;
+
+      // Decorative clover icon
+      doc.setTextColor(156, 163, 175); // Light gray
+      doc.setFontSize(16);
+      doc.text("☘", pageWidth / 2, yPosition, { align: "center" });
+      yPosition += 15;
+
+      // Reference-style footer links (smaller text)
+      doc.setFontSize(7);
+      doc.setTextColor(107, 114, 128);
+      const footerLinks = [
+        "1. https://tomo-chat.com",
+        "2. Generated with TOMO AI Assistant",
+        "3. Visit us for more conversations"
+      ];
+      
+      footerLinks.forEach((link, idx) => {
+        doc.text(link, margin, yPosition);
+        yPosition += 5;
+      });
 
       // Save PDF
-      doc.save(`tomo-chat-${Date.now()}.pdf`);
+      doc.save(`tomo-chat-export-${Date.now()}.pdf`);
 
       setExportSuccess(true);
       setTimeout(() => setExportSuccess(false), 2000);
