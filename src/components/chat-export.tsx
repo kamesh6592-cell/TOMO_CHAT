@@ -368,7 +368,7 @@ export function ChatExport({ messages, chatTitle }: ChatExportProps) {
 
         if (hasCodeBlock) {
           // Remove markdown code fences if present
-          let codeContent = textContent.replace(/```[\w]*\n?/g, '').trim();
+          const codeContent = textContent.replace(/```[\w]*\n?/g, '').trim();
           
           const lines = doc.splitTextToSize(codeContent, contentWidth - 12);
           const boxHeight = lines.length * 4.2 + 10;
