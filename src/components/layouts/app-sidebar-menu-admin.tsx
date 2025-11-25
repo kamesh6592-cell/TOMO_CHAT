@@ -6,7 +6,6 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "ui/sidebar";
-import { Tooltip } from "ui/tooltip";
 import { SidebarMenuItem } from "ui/sidebar";
 import { SidebarMenuButton } from "ui/sidebar";
 import { Shield, Users } from "lucide-react";
@@ -35,16 +34,17 @@ const AppSidebarAdmin = () => {
 
   return (
     <SidebarMenu className="group/admin">
-      <Tooltip>
-        <SidebarMenuItem>
-          <Link href="/admin" data-testid="admin-sidebar-link">
-            <SidebarMenuButton className="font-semibold">
-              <Shield className="size-4 text-foreground" />
-              {t("title")}
-            </SidebarMenuButton>
-          </Link>
-        </SidebarMenuItem>
-      </Tooltip>
+      <SidebarMenuItem>
+        <Link href="/admin" data-testid="admin-sidebar-link">
+          <SidebarMenuButton 
+            tooltip={t("title")}
+            className="font-semibold"
+          >
+            <Shield className="size-4 text-foreground" />
+            {t("title")}
+          </SidebarMenuButton>
+        </Link>
+      </SidebarMenuItem>
       {shouldExpandAdmin && (
         <SidebarMenuSub className="mb-2">
           {adminNavItems.map((item) => (

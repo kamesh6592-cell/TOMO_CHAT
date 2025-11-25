@@ -48,89 +48,91 @@ export function AppSidebarMenus({ user }: { user?: BasicUser }) {
     <SidebarGroup>
       <SidebarGroupContent>
         <SidebarMenu>
-          <Tooltip>
-            <SidebarMenuItem className="mb-1">
-              <Link
-                href="/"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setOpenMobile(false);
-                  router.push(`/`);
-                  router.refresh();
-                }}
+          <SidebarMenuItem className="mb-1">
+            <Link
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                setOpenMobile(false);
+                router.push(`/`);
+                router.refresh();
+              }}
+            >
+              <SidebarMenuButton 
+                tooltip={t("Layout.newChat")}
+                className="flex font-semibold group/new-chat bg-input/20 border border-border/40"
               >
-                <SidebarMenuButton className="flex font-semibold group/new-chat bg-input/20 border border-border/40">
-                  <WriteIcon className="size-4" />
-                  {t("Layout.newChat")}
-                  <div className="flex items-center gap-1 text-xs font-medium ml-auto opacity-0 group-hover/new-chat:opacity-100 transition-opacity">
-                    {getShortcutKeyList(Shortcuts.openNewChat).map((key) => (
-                      <span
-                        key={key}
-                        className="border w-5 h-5 flex items-center justify-center bg-accent rounded"
-                      >
-                        {key}
-                      </span>
-                    ))}
-                  </div>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          </Tooltip>
+                <WriteIcon className="size-4" />
+                {t("Layout.newChat")}
+                <div className="flex items-center gap-1 text-xs font-medium ml-auto opacity-0 group-hover/new-chat:opacity-100 transition-opacity">
+                  {getShortcutKeyList(Shortcuts.openNewChat).map((key) => (
+                    <span
+                      key={key}
+                      className="border w-5 h-5 flex items-center justify-center bg-accent rounded"
+                    >
+                      {key}
+                    </span>
+                  ))}
+                </div>
+              </SidebarMenuButton>
+            </Link>
+          </SidebarMenuItem>
         </SidebarMenu>
         <SidebarMenu>
-          <Tooltip>
-            <SidebarMenuItem>
-              <Link href="/mcp">
-                <SidebarMenuButton className="font-semibold">
-                  <MCPIcon className="size-4 fill-accent-foreground" />
-                  {t("Layout.mcpConfiguration")}
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          </Tooltip>
+          <SidebarMenuItem>
+            <Link href="/mcp">
+              <SidebarMenuButton 
+                tooltip={t("Layout.mcpConfiguration")}
+                className="font-semibold"
+              >
+                <MCPIcon className="size-4 fill-accent-foreground" />
+                {t("Layout.mcpConfiguration")}
+              </SidebarMenuButton>
+            </Link>
+          </SidebarMenuItem>
         </SidebarMenu>
         <SidebarMenu>
-          <Tooltip>
-            <SidebarMenuItem>
-              <Link href="/workflow">
-                <SidebarMenuButton className="font-semibold">
-                  <Waypoints className="size-4" />
-                  {t("Layout.workflow")}
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          </Tooltip>
+          <SidebarMenuItem>
+            <Link href="/workflow">
+              <SidebarMenuButton 
+                tooltip={t("Layout.workflow")}
+                className="font-semibold"
+              >
+                <Waypoints className="size-4" />
+                {t("Layout.workflow")}
+              </SidebarMenuButton>
+            </Link>
+          </SidebarMenuItem>
         </SidebarMenu>
         {getIsUserAdmin(user) && <AppSidebarAdmin />}
         <SidebarMenu className="group/archive">
-          <Tooltip>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                onClick={toggleArchive}
-                className="font-semibold"
-              >
-                {expandedArchive ? (
-                  <FolderOpenIcon className="size-4" />
-                ) : (
-                  <FolderSearchIcon className="size-4" />
-                )}
-                {t("Archive.title")}
-              </SidebarMenuButton>
-              <SidebarMenuAction
-                className="group-hover/archive:opacity-100 opacity-0 transition-opacity"
-                onClick={() => setAddArchiveDialogOpen(true)}
-              >
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <PlusIcon className="size-4" />
-                  </TooltipTrigger>
-                  <TooltipContent side="right" align="center">
-                    {t("Archive.addArchive")}
-                  </TooltipContent>
-                </Tooltip>
-              </SidebarMenuAction>
-            </SidebarMenuItem>
-          </Tooltip>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={toggleArchive}
+              tooltip={t("Archive.title")}
+              className="font-semibold"
+            >
+              {expandedArchive ? (
+                <FolderOpenIcon className="size-4" />
+              ) : (
+                <FolderSearchIcon className="size-4" />
+              )}
+              {t("Archive.title")}
+            </SidebarMenuButton>
+            <SidebarMenuAction
+              className="group-hover/archive:opacity-100 opacity-0 transition-opacity"
+              onClick={() => setAddArchiveDialogOpen(true)}
+            >
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <PlusIcon className="size-4" />
+                </TooltipTrigger>
+                <TooltipContent side="right" align="center">
+                  {t("Archive.addArchive")}
+                </TooltipContent>
+              </Tooltip>
+            </SidebarMenuAction>
+          </SidebarMenuItem>
           {expandedArchive && (
             <>
               <SidebarMenuSub>
