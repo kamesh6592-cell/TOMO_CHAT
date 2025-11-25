@@ -60,6 +60,14 @@ export const nanoBananaTool = createTool({
         prompt: "",
         abortSignal,
         messages: latestMessages,
+      }).catch((err) => {
+        logger.error("Image generation failed:", err);
+        // Re-throw with user-friendly message if not already formatted
+        const errorMsg = err?.message || String(err);
+        if (errorMsg.includes('daily image generation limit')) {
+          throw err; // Already user-friendly
+        }
+        throw new Error("Unable to generate the image. Please try again later.");
       });
 
       const resultImages = await safe(images.images)
@@ -143,6 +151,25 @@ export const openaiImageTool = createTool({
       const result = await generateImageWithOpenAI({
         prompt,
         abortSignal,
+      }).catch((err) => {
+        logger.error("OpenAI image generation failed:", err);
+        const errorMsg = err?.message || String(err);
+        
+        // Check for quota/billing errors
+        if (errorMsg.includes('quota') || errorMsg.includes('billing')) {
+          throw new Error(
+            "The image generation service has reached its usage limit. Please contact support."
+          );
+        }
+        
+        // Check for authentication errors
+        if (errorMsg.includes('unauthorized') || errorMsg.includes('authentication')) {
+          throw new Error(
+            "There's an authentication issue with the image service. Please contact support."
+          );
+        }
+        
+        throw new Error("Unable to generate the image. Please try again later.");
       });
 
       if (result.images.length > 0) {

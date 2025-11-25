@@ -148,7 +148,35 @@ export const generateImageWithNanoBanana = async (
     })
     .catch((err) => {
       logger.error(err);
-      throw err;
+      
+      // Parse error for better user feedback
+      const errorMessage = err?.message || JSON.stringify(err);
+      
+      // Check for quota exceeded errors
+      if (errorMessage.includes('RESOURCE_EXHAUSTED') || errorMessage.includes('Quota exceeded')) {
+        throw new Error(
+          "I've reached the daily image generation limit for this service. Please try again later or contact support to upgrade your plan for unlimited access."
+        );
+      }
+      
+      // Check for API key errors
+      if (errorMessage.includes('API key') || errorMessage.includes('authentication')) {
+        throw new Error(
+          "There's an issue with the image generation service authentication. Please contact support."
+        );
+      }
+      
+      // Check for invalid requests
+      if (errorMessage.includes('INVALID_ARGUMENT')) {
+        throw new Error(
+          "The image request couldn't be processed. Please try rephrasing your image description."
+        );
+      }
+      
+      // Generic error with helpful message
+      throw new Error(
+        "I encountered an issue while generating the image. Please try again or rephrase your request."
+      );
     });
   return (
     response.candidates?.reduce(
