@@ -23,7 +23,6 @@ export const HtmlPreview = memo(function HtmlPreview({
 }) {
   const { copy, copied } = useCopy();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showCode, setShowCode] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const hasRendered = useRef(false);
 
