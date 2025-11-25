@@ -59,13 +59,13 @@ export function AppSidebar({
         <AppSidebarUser user={user} />
         
         {/* AJ STUDIOZ Branding */}
-        <div className="px-3 py-2 border-t border-sidebar-border/50">
-          <div className="flex items-center justify-center gap-2 text-xs text-sidebar-foreground/60">
-            <span>Designed by</span>
-            <span className="animate-pulse text-red-500">♥</span>
-            <div className="flex items-center gap-1">
-              <img src="/AJ.svg" alt="AJ" className="w-4 h-4" />
-              <span className="font-semibold text-sidebar-foreground/80">AJ STUDIOZ</span>
+        <div className="px-3 py-2 border-t border-sidebar-border/50 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:border-t-0">
+          <div className="flex items-center justify-center gap-2 text-xs text-sidebar-foreground/60 group-data-[collapsible=icon]:gap-0">
+            <span className="group-data-[collapsible=icon]:hidden">Designed by</span>
+            <span className="animate-pulse text-red-500 group-data-[collapsible=icon]:hidden">♥</span>
+            <div className="flex items-center gap-1 group-data-[collapsible=icon]:gap-0">
+              <img src="/AJ.svg" alt="AJ STUDIOZ" className="w-4 h-4" />
+              <span className="font-semibold text-sidebar-foreground/80 group-data-[collapsible=icon]:hidden">AJ STUDIOZ</span>
             </div>
           </div>
         </div>
