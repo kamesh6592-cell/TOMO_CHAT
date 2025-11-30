@@ -82,13 +82,15 @@ export const outputNodeExecutor: NodeExecutor<OutputNodeData> = ({
     if (connectedNodes.length > 0) {
       // Auto-collect from the last connected node (typically the main result)
       const lastNode = connectedNodes[connectedNodes.length - 1];
-      const output = state.getOutput({ nodeId: lastNode.id, path: [] });
-      
-      return {
-        output: {
-          result: output,
-        },
-      };
+      if (lastNode) {
+        const output = state.getOutput({ nodeId: lastNode.id, path: [] });
+        
+        return {
+          output: {
+            result: output,
+          },
+        };
+      }
     }
   }
 
