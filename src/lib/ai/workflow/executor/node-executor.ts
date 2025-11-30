@@ -71,19 +71,18 @@ export const outputNodeExecutor: NodeExecutor<OutputNodeData> = ({
   node,
   state,
 }) => {
-  // If no output data is configured, try to collect from connected nodes
+  // If no output data is configured or all sources are empty, try to collect from connected nodes
   if (!node.outputData.length || node.outputData.every(item => !item.source)) {
-    const connectedNodes = state.edges
-      .filter(edge => edge.target === node.id)
-      .map(edge => edge.source)
-      .map(sourceId => state.nodes.find(n => n.id === sourceId))
-      .filter(Boolean);
-
-    if (connectedNodes.length > 0) {
-      // Auto-collect from the last connected node (typically the main result)
-      const lastNode = connectedNodes[connectedNodes.length - 1];
-      if (lastNode) {
-        const output = state.getOutput({ nodeId: lastNode.id, path: [] });
+    const connectedEdges = state.edges.filter(edge => edge.target === node.id);
+    
+    if (connectedEdges.length > 0) {
+      // Get the last connected edge (most recent connection)
+      const lastEdge = connectedEdges[connectedEdges.length - 1];
+      const sourceNode = state.nodes.find(n => n.id === lastEdge.source);
+      
+      if (sourceNode) {
+        // Try to get the complete output from the source node
+        const output = state.getOutput({ nodeId: sourceNode.id, path: [] });
         
         return {
           output: {

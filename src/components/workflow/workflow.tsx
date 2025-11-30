@@ -283,8 +283,8 @@ export default function Workflow({
           backgroundImage: 'url(/aj-logo.jpg)',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          backgroundSize: '200px 200px',
-          opacity: 0.05,
+          backgroundSize: '400px 400px',
+          opacity: 0.08,
           filter: 'grayscale(100%)',
         }}
       />
