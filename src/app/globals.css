@@ -39,7 +39,7 @@
   --color-card: var(--card);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: 0.625rem;
+  --radius-lg: 1.5rem;
   --radius-xl: calc(var(--radius) + 4px);
 }
 
