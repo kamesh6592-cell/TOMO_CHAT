@@ -44,6 +44,17 @@
 }
 
 :root {
+  /* Sugar-high syntax highlighting - Light theme - Enhanced for quality */
+  --sh-identifier: oklch(0.35 0.05 250);
+  --sh-keyword: oklch(0.45 0.18 25);
+  --sh-string: oklch(0.45 0.15 160);
+  --sh-class: oklch(0.50 0.16 280);
+  --sh-property: oklch(0.45 0.15 240);
+  --sh-entity: oklch(0.42 0.12 200);
+  --sh-jsxliterals: oklch(0.48 0.16 330);
+  --sh-sign: oklch(0.40 0.08 250);
+  --sh-comment: oklch(0.50 0.05 250);
+
   --radius: 0.75rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
@@ -764,6 +775,17 @@
 }
 
 .dark {
+  /* Sugar-high syntax highlighting - Dark theme - Enhanced for quality */
+  --sh-identifier: oklch(0.88 0.08 250);
+  --sh-keyword: oklch(0.78 0.18 25);
+  --sh-string: oklch(0.75 0.18 160);
+  --sh-class: oklch(0.82 0.20 280);
+  --sh-property: oklch(0.78 0.18 240);
+  --sh-entity: oklch(0.76 0.16 200);
+  --sh-jsxliterals: oklch(0.80 0.18 330);
+  --sh-sign: oklch(0.75 0.10 250);
+  --sh-comment: oklch(0.60 0.08 250);
+
   --background: hsl(220 6% 9%);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.21 0.006 285.885);
@@ -1516,4 +1538,15 @@
   .transition-colors-300 {
     @apply transition-colors duration-300;
   }
+
+  /* Sugar-high syntax highlighting enhancements - Exact match with aj-studioz-api-documentation */
+  [data-sh-identifier] { color: var(--sh-identifier); }
+  [data-sh-keyword] { color: var(--sh-keyword); font-weight: 500; }
+  [data-sh-string] { color: var(--sh-string); }
+  [data-sh-class] { color: var(--sh-class); font-weight: 500; }
+  [data-sh-property] { color: var(--sh-property); }
+  [data-sh-entity] { color: var(--sh-entity); }
+  [data-sh-jsxliterals] { color: var(--sh-jsxliterals); }
+  [data-sh-sign] { color: var(--sh-sign); }
+  [data-sh-comment] { color: var(--sh-comment); font-style: italic; }
 }
