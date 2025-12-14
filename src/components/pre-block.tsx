@@ -17,6 +17,7 @@ import { CheckIcon, CopyIcon } from "lucide-react";
 import JsonView from "ui/json-view";
 import { useCopy } from "@/hooks/use-copy";
 import dynamic from "next/dynamic";
+import { StyledCodeBlock } from "ui/code-block-styled";
 
 // Dynamically import MermaidDiagram component
 const MermaidDiagram = dynamic(
@@ -121,6 +122,7 @@ export function PreBlock({ children }: { children: any }) {
   const { theme } = useTheme();
   const language = children.props.className?.split("-")?.[1] || "bash";
   const [loading, setLoading] = useState(true);
+  const [useStyledBlock, setUseStyledBlock] = useState(false);
   const [component, setComponent] = useState<JSX.Element | null>(
     <PurePre className="animate-pulse" code={code} lang={language}>
       {children}
@@ -128,17 +130,38 @@ export function PreBlock({ children }: { children: any }) {
   );
 
   useLayoutEffect(() => {
-    safe()
-      .map(() =>
-        Highlight(
-          code,
-          language,
-          theme == "dark" ? "dark-plus" : "github-light",
-        ),
-      )
-      .ifOk(setComponent)
-      .watch(() => setLoading(false));
+    // Check if we should use styled code block (for common languages)
+    const styledLanguages = ['javascript', 'typescript', 'python', 'bash', 'json', 'tsx', 'jsx', 'css', 'html'];
+    const shouldUseStyled = styledLanguages.includes(language.toLowerCase());
+    
+    if (shouldUseStyled) {
+      setUseStyledBlock(true);
+      setLoading(false);
+    } else {
+      safe()
+        .map(() =>
+          Highlight(
+            code,
+            language,
+            theme == "dark" ? "dark-plus" : "github-light",
+          ),
+        )
+        .ifOk(setComponent)
+        .watch(() => setLoading(false));
+    }
   }, [theme, language, code]);
+
+  // Use styled code block for supported languages
+  if (useStyledBlock) {
+    return (
+      <StyledCodeBlock 
+        language={language}
+        elementKey={`${language}-${code.slice(0, 50)}`}
+      >
+        {code}
+      </StyledCodeBlock>
+    );
+  }
 
   // For other code blocks, render as before
   return (

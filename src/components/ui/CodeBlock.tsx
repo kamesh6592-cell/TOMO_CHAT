@@ -7,6 +7,7 @@ import { codeToHast } from "shiki/bundle/web";
 import { safe } from "ts-safe";
 import { jsx, jsxs } from "react/jsx-runtime";
 import { cn } from "lib/utils";
+import { StyledCodeBlock } from "./code-block-styled";
 
 export function CodeBlock({
   code,
@@ -14,16 +15,30 @@ export function CodeBlock({
   fallback,
   className,
   showLineNumbers = true,
+  useStyledVariant = false,
 }: {
   code?: string;
   lang: string;
   fallback?: ReactNode;
   className?: string;
   showLineNumbers?: boolean;
+  useStyledVariant?: boolean;
 }) {
   const { theme } = useTheme();
 
   const [component, setComponent] = useState<JSX.Element | null>(null);
+
+  // Use styled variant if requested
+  if (useStyledVariant && code) {
+    return (
+      <StyledCodeBlock 
+        language={lang}
+        elementKey={`${lang}-${code.slice(0, 50)}`}
+      >
+        {code}
+      </StyledCodeBlock>
+    );
+  }
 
   useLayoutEffect(() => {
     safe()
