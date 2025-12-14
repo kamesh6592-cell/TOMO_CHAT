@@ -28,19 +28,9 @@ export function CodeBlock({
 
   const [component, setComponent] = useState<JSX.Element | null>(null);
 
-  // Use styled variant if requested
-  if (useStyledVariant && code) {
-    return (
-      <StyledCodeBlock 
-        language={lang}
-        elementKey={`${lang}-${code.slice(0, 50)}`}
-      >
-        {code}
-      </StyledCodeBlock>
-    );
-  }
-
   useLayoutEffect(() => {
+    if (useStyledVariant) return;
+    
     safe()
       .map(async () => {
         const out = await codeToHast(code || "", {
@@ -75,9 +65,21 @@ export function CodeBlock({
         }) as JSX.Element;
       })
       .ifOk(setComponent);
-  }, [theme, lang, code]);
+  }, [theme, lang, code, useStyledVariant, showLineNumbers]);
 
   if (!code) return fallback;
+
+  // Use styled variant if requested
+  if (useStyledVariant) {
+    return (
+      <StyledCodeBlock 
+        language={lang}
+        elementKey={`${lang}-${code.slice(0, 50)}`}
+      >
+        {code}
+      </StyledCodeBlock>
+    );
+  }
 
   return component ?? fallback;
 }
