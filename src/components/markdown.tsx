@@ -86,7 +86,7 @@ const components: Partial<Components> = {
   },
   pre: ({ children }) => {
     return (
-      <div className="px-2 sm:px-4 py-2">
+      <div className="px-1 sm:px-4 py-2">
         <PreBlock>{children}</PreBlock>
       </div>
     );

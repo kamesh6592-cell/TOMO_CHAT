@@ -1559,11 +1559,12 @@
       -webkit-overflow-scrolling: touch;
     }
     
-    /* Ensure code blocks have better mobile spacing and readability */
+    /* Make code blocks wider on mobile like uploaded image */
     .group.relative.my-5.rounded-xl.border.border-border.bg-accent.overflow-hidden {
-      margin-left: -0.5rem !important;
-      margin-right: -0.5rem !important;
-      border-radius: 0.75rem !important;
+      margin-left: -1rem !important;
+      margin-right: -1rem !important;
+      border-radius: 0.5rem !important;
+      width: calc(100% + 2rem) !important;
     }
     
     /* Better mobile font sizing for code */
@@ -1574,7 +1575,7 @@
     
     /* Ensure proper mobile padding */
     .font-mono.text-sm.leading-relaxed {
-      padding: 1rem !important;
+      padding: 1rem 1.25rem !important;
     }
   }
 }
