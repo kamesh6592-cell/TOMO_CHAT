@@ -1706,4 +1706,23 @@
   .custom-checkbox:checked {
     @apply border-primary bg-primary;
   }
+
+  /* Infinite scroll animation for testimonials */
+  @keyframes scroll-testimonials {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  .animate-scroll-testimonials {
+    animation: scroll-testimonials 20s linear infinite;
+    width: max-content;
+  }
+
+  .animate-scroll-testimonials:hover {
+    animation-play-state: paused;
+  }
 }
