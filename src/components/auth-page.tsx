@@ -79,9 +79,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="h-[100dvh] flex flex-col md:flex-row font-geist w-[100dvw]">
+    <div className="h-screen flex flex-col md:flex-row font-geist w-screen overflow-hidden">
       {/* Left column: auth form */}
-      <section className="flex-1 flex items-center justify-center p-8">
+      <section className="flex-1 flex items-center justify-center p-8 overflow-y-auto">
         <div className="w-full max-w-md">
           <div className="flex flex-col gap-6">
             <h1 className="animate-element animate-delay-100 text-4xl md:text-5xl font-semibold leading-tight">{title}</h1>
@@ -154,10 +154,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
       {/* Right column: hero image + testimonials */}
       {heroImageSrc && (
-        <section className="hidden md:block flex-1 relative p-4">
-          <div className="animate-slide-right animate-delay-300 absolute inset-4 rounded-3xl bg-cover bg-center" style={{ backgroundImage: `url(${heroImageSrc})` }}></div>
+        <section className="hidden md:flex flex-1 relative overflow-hidden">
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url(${heroImageSrc})` }}
+          ></div>
           {testimonials.length > 0 && (
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-4 px-8 w-full justify-center">
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-4 px-8 w-full justify-center z-10">
               <TestimonialCard testimonial={testimonials[0]} delay="animate-delay-1000" />
               {testimonials[1] && <div className="hidden xl:flex"><TestimonialCard testimonial={testimonials[1]} delay="animate-delay-1200" /></div>}
               {testimonials[2] && <div className="hidden 2xl:flex"><TestimonialCard testimonial={testimonials[2]} delay="animate-delay-1400" /></div>}
