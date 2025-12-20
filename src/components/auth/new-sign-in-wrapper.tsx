@@ -70,15 +70,15 @@ export default function NewSignInWrapper({
       title={
         <div className="flex items-center gap-4">
           <img 
-            src="/image_1760628157519.jpeg" 
+            src="/aj-logo.jpg" 
             alt="Tomo Chat" 
             className="w-12 h-12 rounded-full object-cover"
           />
-          <span className="font-light text-foreground tracking-tighter">Welcome Back</span>
+          <span className="font-light text-foreground tracking-tighter">Welcome Back To Tomo Chat</span>
         </div>
       }
       description="Sign in to continue your conversations and unlock powerful AI features."
-      heroImageSrc="https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+      heroImageSrc="/image_1760628157519.jpeg"
       testimonials={testimonials}
       onSubmit={emailAndPasswordEnabled ? handleSignIn : undefined}
       onGoogleSignIn={socialAuthenticationProviders.includes("google") ? handleGoogleSignIn : undefined}
