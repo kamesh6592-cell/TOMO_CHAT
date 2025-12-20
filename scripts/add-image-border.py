@@ -108,13 +108,13 @@ def main():
         print(f"Error: Input file not found: {input_path}")
         return
     
-    # Add curved border with white color (more stylish and better fitted)
+    # Add curved border with mild white color (subtle and stylish)
     add_curved_border(
         input_path=input_path,
         output_path=output_path,
-        border_width=8,  # Reduced to 8px white border for better fit
-        corner_radius=60, # More circular for perfect round appearance
-        border_color=(255, 255, 255, 255)  # White border
+        border_width=5,  # Very thin border for subtle effect
+        corner_radius=60, # Perfectly circular
+        border_color=(255, 255, 255, 180)  # Mild white with transparency
     )
 
 if __name__ == "__main__":

@@ -75,7 +75,7 @@ export default function NewSignUpWrapper({
           ? "Set up your administrator account to get started with TOMO Chat."
           : "Create your account and start conversing with advanced AI."
       }
-      heroImageSrc="/meowl.png"
+      heroImageSrc="/toll.jpeg"
       testimonials={testimonials}
       onSubmit={emailAndPasswordEnabled ? handleSignUp : undefined}
       onGoogleSignIn={socialAuthenticationProviders.includes("google") ? handleGoogleSignUp : undefined}
