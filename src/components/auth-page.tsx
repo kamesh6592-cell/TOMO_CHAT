@@ -48,12 +48,12 @@ const GlassInputWrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 const TestimonialCard = ({ testimonial, delay }: { testimonial: Testimonial, delay: string }) => (
-  <div className={`animate-testimonial ${delay} flex items-start gap-3 rounded-3xl bg-card/40 dark:bg-zinc-800/40 backdrop-blur-xl border border-white/10 p-5 w-64`}>
-    <img src={testimonial.avatarSrc} className="h-10 w-10 object-cover rounded-2xl" alt="avatar" />
+  <div className={`${delay} flex items-start gap-3 rounded-2xl bg-gradient-to-br from-white/95 to-white/90 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200/50 p-5 w-64 min-w-64`}>
+    <img src={testimonial.avatarSrc} className="h-12 w-12 object-cover rounded-xl shadow-md" alt="avatar" />
     <div className="text-sm leading-snug">
-      <p className="flex items-center gap-1 font-medium">{testimonial.name}</p>
-      <p className="text-muted-foreground">{testimonial.handle}</p>
-      <p className="mt-1 text-foreground/80">{testimonial.text}</p>
+      <p className="flex items-center gap-1 font-semibold text-gray-900">{testimonial.name}</p>
+      <p className="text-gray-600 text-xs">{testimonial.handle}</p>
+      <p className="mt-2 text-gray-700 text-xs leading-relaxed">{testimonial.text}</p>
     </div>
   </div>
 );
