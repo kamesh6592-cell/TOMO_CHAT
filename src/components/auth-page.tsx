@@ -48,12 +48,12 @@ const GlassInputWrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 const TestimonialCard = ({ testimonial, delay }: { testimonial: Testimonial, delay: string }) => (
-  <div className={`${delay} flex items-start gap-3 rounded-2xl bg-gradient-to-br from-white/95 to-white/90 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200/50 p-5 w-64 min-w-64`}>
+  <div className={`${delay} flex items-start gap-3 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-300 p-5 w-64 min-w-64`}>
     <img src={testimonial.avatarSrc} className="h-12 w-12 object-cover rounded-xl shadow-md" alt="avatar" />
     <div className="text-sm leading-snug">
-      <p className="flex items-center gap-1 font-semibold text-gray-900">{testimonial.name}</p>
-      <p className="text-gray-600 text-xs">{testimonial.handle}</p>
-      <p className="mt-2 text-gray-700 text-xs leading-relaxed">{testimonial.text}</p>
+      <p className="flex items-center gap-1 font-semibold text-black">{testimonial.name}</p>
+      <p className="text-gray-700 text-xs">{testimonial.handle}</p>
+      <p className="mt-2 text-black text-xs leading-relaxed">{testimonial.text}</p>
     </div>
   </div>
 );
@@ -153,7 +153,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       </section>
 
       {/* Right column: hero content + testimonials */}
-      <section className="hidden md:flex flex-1 relative overflow-hidden rounded-3xl bg-gray-50">
+      <section className="hidden md:flex flex-1 relative overflow-hidden rounded-3xl bg-gray-50 m-4">
         {/* Background image with low opacity */}
         <div 
           className="absolute inset-0 bg-center bg-no-repeat opacity-10 z-0"
@@ -169,16 +169,16 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         </div>
         
         {/* Main content */}
-        <div className="flex flex-col justify-center items-center text-center px-5 z-10 w-full">
-          <div className="max-w-5xl">
-            <h1 className="text-6xl lg:text-7xl font-extrabold text-gray-700 leading-tight tracking-tight mb-6">
-              Everything you need,<br />to make anything you want.
+        <div className="flex flex-col justify-center items-center text-center px-8 z-10 w-full">
+          <div className="max-w-3xl">
+            <h1 className="text-3xl lg:text-4xl font-extrabold text-gray-700 leading-tight tracking-tight mb-4">
+              Everything you need, to make anything you want.
             </h1>
-            <p className="text-2xl lg:text-3xl font-normal text-gray-600 mb-3 leading-relaxed">
+            <p className="text-base lg:text-lg font-normal text-gray-600 mb-2 leading-relaxed">
               Chat with the best AI, privately or in a group chat.
             </p>
-            <p className="font-mono text-xl lg:text-2xl text-gray-500 mt-8 tracking-wide">
-              Explore GPT-5-mini, Claude-Sonnet-4.5, Gemini<br />2.5-Pro, DeepSeek-R1
+            <p className="font-mono text-sm lg:text-base text-gray-500 mt-4 tracking-wide leading-relaxed">
+              Explore GPT-5-mini, Claude-Sonnet-4.5,<br />Gemini 2.5-Pro, DeepSeek-R1
             </p>
           </div>
         </div>
