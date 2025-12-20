@@ -56,21 +56,20 @@ export default function NewSignInWrapper({
     router.push("/sign-up");
   };
 
-  const testimonials = [
-    {
-      avatarSrc: "/aj-logo.jpg",
-      name: "TOMO Chat",
-      handle: "@tomo_chat",
-      text: "Seamless communication with advanced AI capabilities."
-    }
-  ];
-
   return (
     <AuthPage
-      title={<span className="font-light text-foreground tracking-tighter">Welcome Back</span>}
+      title={
+        <div className="flex items-center gap-4">
+          <img 
+            src="/image_1760628157519.jpeg" 
+            alt="Tomo Chat" 
+            className="w-12 h-12 rounded-full object-cover"
+          />
+          <span className="font-light text-foreground tracking-tighter">Tomo Chat</span>
+        </div>
+      }
       description="Sign in to continue your conversations and unlock powerful AI features."
-      heroImageSrc="/aj-logo.jpg"
-      testimonials={testimonials}
+      testimonials={[]}
       onSubmit={emailAndPasswordEnabled ? handleSignIn : undefined}
       onGoogleSignIn={socialAuthenticationProviders.includes("google") ? handleGoogleSignIn : undefined}
       onResetPassword={handleResetPassword}
