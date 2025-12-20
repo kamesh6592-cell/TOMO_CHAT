@@ -152,13 +152,36 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         </div>
       </section>
 
-      {/* Right column: hero image + testimonials */}
-      {heroImageSrc && (
-        <section className="hidden md:flex flex-1 relative overflow-hidden rounded-3xl">
-          <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url(${heroImageSrc})` }}
-          ></div>
+      {/* Right column: hero content + testimonials */}
+      <section className="hidden md:flex flex-1 relative overflow-hidden rounded-3xl bg-gray-50">
+        {/* Background image with low opacity */}
+        <div 
+          className="absolute inset-0 bg-center bg-no-repeat opacity-10 z-0"
+          style={{ 
+            backgroundImage: `url('https://z-cdn-media.chatglm.cn/files/e2ba2424-9a98-4abb-9280-4b26fc90dccd.png?auth_key=1797762740-46ac8f69f2414735be4997dcafd9e27d-0-4d33e6b7097c10a812538222bb2e2895')`,
+            backgroundSize: '450px'
+          }}
+        ></div>
+        
+        {/* Logo */}
+        <div className="absolute top-10 left-10 font-mono text-3xl font-semibold text-gray-900 z-10 tracking-wide">
+          Tomo Chat
+        </div>
+        
+        {/* Main content */}
+        <div className="flex flex-col justify-center items-center text-center px-5 z-10 w-full">
+          <div className="max-w-5xl">
+            <h1 className="text-6xl lg:text-7xl font-extrabold text-gray-700 leading-tight tracking-tight mb-6">
+              Everything you need,<br />to make anything you want.
+            </h1>
+            <p className="text-2xl lg:text-3xl font-normal text-gray-600 mb-3 leading-relaxed">
+              Chat with the best AI, privately or in a group chat.
+            </p>
+            <p className="font-mono text-xl lg:text-2xl text-gray-500 mt-8 tracking-wide">
+              Explore GPT-5-mini, Claude-Sonnet-4.5, Gemini<br />2.5-Pro, DeepSeek-R1
+            </p>
+          </div>
+        </div>
           {testimonials.length > 0 && (
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full overflow-hidden">
               <div className="animate-scroll-testimonials">
